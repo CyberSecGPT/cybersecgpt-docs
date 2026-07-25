@@ -167,7 +167,6 @@ A component aligns with these principles when it:
 
 ## Unresolved decisions
 
-- Which existing repository owns model architecture.
 - Which checkpoint encodings are required first.
 - What local reference model defines the initial independence test.
 - Which artifact signing system and trust roots are used.

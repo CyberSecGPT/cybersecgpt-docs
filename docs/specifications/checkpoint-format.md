@@ -8,6 +8,11 @@ repositories; no loader or writer is production-ready.
 
 The manifest semantics are intended to remain stable while concrete tensor
 containers, compression, canonical encoding, and signing are **Unresolved**.
+`cybersecgpt-foundation` owns the logical manifest schema,
+`cybersecgpt-training` owns checkpoint production, and
+`cybersecgpt-inference` owns loading under
+[ADR-0005](../decisions/ADR-0005-model-ownership.md) and
+[ADR-0010](../decisions/ADR-0010-artifact-and-event-contracts.md).
 
 ## Goals
 

@@ -6,6 +6,10 @@ This is a **stable conceptual event contract proposal**. It does not select a
 broker, encoding, schema registry, storage system, or delivery guarantee. No event
 infrastructure is currently claimed production-ready.
 
+`cybersecgpt-foundation` owns the executable common envelope, and each domain
+repository owns its event payload schemas under
+[ADR-0010](../decisions/ADR-0010-artifact-and-event-contracts.md).
+
 ## Goals
 
 - Stable cross-repository facts without shared database coupling.
@@ -196,7 +200,7 @@ meaningful, evidence digest, and known non-determinism.
 
 - Canonical encoding and schema language.
 - Broker, persistence, partitions, and delivery semantics.
-- Event-type and schema registry owner.
+- Schema registry technology and operation.
 - Retention and deduplication windows.
 - Integrity/signing and replay authorization.
 - Data-classification vocabulary.

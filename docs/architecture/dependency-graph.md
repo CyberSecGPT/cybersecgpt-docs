@@ -4,7 +4,8 @@
 
 - **Established:** the production dependency graph is acyclic.
 - **Established:** external AI providers are optional adapters at the boundary.
-- **Proposed:** the layers and repository assignments below.
+- **Established:** ADR-0003 and ADR-0004 accept the layers and repository
+  assignments below.
 - **Observed:** most repositories are empty, so this graph constrains future
   implementation rather than describing current imports.
 
@@ -30,7 +31,7 @@ directed ordering is documented and no reverse path exists. A shared abstraction
 needed by peers moves to a lower-level contract owner rather than creating mutual
 imports.
 
-## Proposed repository graph
+## Approved repository graph
 
 ```mermaid
 flowchart TB
@@ -185,22 +186,26 @@ flowchart LR
 Dependency inversion is deliberate: the adapter depends on the platform contract.
 The contract does not depend on the adapter.
 
-## Proposed repositories and overlap
+## Deferred repositories and overlap
 
-The requested proposed names are not added as graph nodes by default:
+The requested proposed names are not approved graph nodes:
 
 - `cybersecgpt-core` overlaps `cybersecgpt-foundation`.
-- `cybersecgpt-model` overlaps foundation plus tokenizer, training, and inference.
-- `cybersecgpt-agents` overlaps `cybersecgpt-reasoning`.
-- `cybersecgpt-security-engine` overlaps `cybersecgpt-security`.
-- `cybersecgpt-exploit-validation` may justify a security isolation boundary, but
-  ownership is unresolved.
-- `cybersecgpt-enterprise` overlaps `cybersecgpt-platform`.
-- `cybersecgpt-licensing` overlaps governance and platform enforcement.
-- `cybersecgpt-cloud` overlaps infrastructure and DevOps.
+- `cybersecgpt-model` is deferred because foundation owns model contracts under
+  ADR-0005.
+- `cybersecgpt-agents` is deferred because reasoning owns agent orchestration
+  under ADR-0006.
+- `cybersecgpt-security-engine` and `cybersecgpt-exploit-validation` are deferred
+  because security owns policy, execution, and isolated authorized validation
+  under ADR-0007.
+- `cybersecgpt-enterprise` and `cybersecgpt-licensing` are deferred under
+  ADR-0008; platform owns the control plane and enforcement while governance owns
+  policy.
+- `cybersecgpt-cloud` is deferred under ADR-0009; infrastructure owns deployment
+  resources and overlays while DevOps owns delivery.
 
 They may enter the graph only after an ADR selects a non-duplicate boundary and
-migration path. See the [repository map](repository-map.md).
+migration path. See the [repository approval matrix](repository-approval-matrix.md).
 
 ## Forbidden edges
 
@@ -231,8 +236,7 @@ database access.
 
 ## Unresolved decisions
 
-- Final ownership of model architecture.
-- Whether policy artifacts reside in governance or a future policy package.
-- Whether authorized exploit validation requires process and repository isolation.
-- Whether monitoring schemas are owned by monitoring or the event-contract owner.
 - Concrete package coordinates and schema registry technology.
+- Concrete service and event transports and delivery guarantees.
+- Policy and artifact signing technology and trust-root ownership.
+- Criteria and evidence required to reopen a deferred repository split.

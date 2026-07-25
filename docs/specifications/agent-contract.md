@@ -6,8 +6,9 @@ This is a **stable conceptual contract proposal** for bounded agent execution.
 `cybersecgpt-reasoning` exists but is empty; `cybersecgpt-agents` does not exist.
 No production agent framework is claimed.
 
-The default ownership proposal is `cybersecgpt-reasoning` until an ADR establishes
-a non-duplicative split.
+The authoritative implementation owner is `cybersecgpt-reasoning` under
+[ADR-0006](../decisions/ADR-0006-agent-runtime-ownership.md). The absent proposed
+`cybersecgpt-agents` repository is deferred.
 
 ## Principles
 
@@ -192,7 +193,6 @@ evidence, runs authorized cleanup, and emits a terminal event.
 
 ## Unresolved decisions
 
-- Repository ownership and split from reasoning.
 - Concrete state/event schemas and persistence.
 - Planner and policy integration interfaces.
 - Default budgets and delegation limits.
