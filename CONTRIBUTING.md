@@ -68,6 +68,16 @@ change must record:
 Prefer assigning responsibility to an existing suitable repository over creating
 a duplicate. Renames, splits, and consolidations require an ADR and migration plan.
 
+## Architecture governance gate
+
+All cross-repository and architecture-sensitive changes MUST follow the
+[architecture change gate](docs/governance/architecture-change-gate.md).
+
+Implementation repositories must reference their repository-map ownership,
+approved dependencies, relevant ADRs, and the contracts they implement or
+consume. A repository placeholder or local directory does not establish
+architectural approval.
+
 ## Validation
 
 Before submitting a change:
