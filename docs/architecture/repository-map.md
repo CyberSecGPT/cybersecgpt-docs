@@ -28,8 +28,15 @@ The status labels mean:
 - **Overlapping** — responsibilities conflict with another existing or proposed
   owner and require an ADR before implementation.
 
-All responsibilities below are **Proposed ownership** unless the status explicitly
-identifies observed implementation.
+Responsibilities below define intended boundaries and do not claim implementation.
+They are accepted for repositories classified **Existing Owner** and remain
+proposals for deferred or experimental names.
+
+Accepted ownership and activation state are governed by the
+[repository approval matrix](repository-approval-matrix.md) and
+[architecture decision records](../decisions/README.md). Repository-map status
+describes whether a name exists or overlaps; it does not by itself authorize
+implementation.
 
 ## Ownership principles
 
@@ -259,8 +266,10 @@ identifies observed implementation.
 - **Purpose:** lowest-level domain types, portability abstractions, and stable
   first-party AI contracts.
 - **Responsibilities:** identifiers, artifact descriptors, capabilities,
-  cancellation/deadline primitives, contract-neutral types, and potentially model
-  architecture definitions after an ADR.
+  cancellation/deadline primitives, contract-neutral types, model architecture
+  definitions, logical checkpoint manifests, and the common event envelope under
+  [ADR-0005](../decisions/ADR-0005-model-ownership.md) and
+  [ADR-0010](../decisions/ADR-0010-artifact-and-event-contracts.md).
 - **Non-responsibilities:** orchestration, network services, provider adapters,
   product UI, or deployment.
 - **Allowed dependencies:** standard libraries and minimal audited utility
@@ -554,7 +563,8 @@ These names do not exist. A proposal does not authorize creating the repository.
 - **Public contracts:** would duplicate foundational contracts unless narrowed.
 - **Likely produced artifacts:** small core packages and schemas.
 - **Current status:** **Proposed, overlapping**; absent. Preferred action is to use
-  `cybersecgpt-foundation`, not create this repository.
+  `cybersecgpt-foundation`, not create this repository. Approval is
+  **Deferred**.
 
 ### `cybersecgpt-model`
 
@@ -571,7 +581,8 @@ These names do not exist. A proposal does not authorize creating the repository.
 - **Likely produced artifacts:** model-definition packages, configuration schemas,
   reference state dictionaries, conformance fixtures.
 - **Current status:** **Proposed, overlapping**; absent. Resolve overlap with
-  `cybersecgpt-foundation` before creation; reusing foundation is the default.
+  `cybersecgpt-foundation` before creation. ADR-0005 assigns model ownership to
+  foundation; approval is **Deferred**.
 
 ### `cybersecgpt-agents`
 
@@ -587,7 +598,8 @@ These names do not exist. A proposal does not authorize creating the repository.
 - **Public contracts:** [agent contract](../specifications/agent-contract.md).
 - **Likely produced artifacts:** agent SDK/runtime and conformance tests.
 - **Current status:** **Proposed, overlapping**; absent. Prefer
-  `cybersecgpt-reasoning` as the initial agent-framework owner.
+  `cybersecgpt-reasoning` as the agent-framework owner under ADR-0006. Approval
+  is **Deferred**.
 
 ### `cybersecgpt-security-engine`
 
@@ -602,7 +614,8 @@ These names do not exist. A proposal does not authorize creating the repository.
 - **Public contracts:** engine capability and bounded execution interfaces.
 - **Likely produced artifacts:** isolated worker service and capability plugins.
 - **Current status:** **Proposed, overlapping**; absent. Prefer implementing the
-  initial boundary in `cybersecgpt-security`.
+  initial boundary in `cybersecgpt-security` under ADR-0007. Approval is
+  **Deferred**.
 
 ### `cybersecgpt-exploit-validation`
 
@@ -621,8 +634,8 @@ These names do not exist. A proposal does not authorize creating the repository.
 - **Likely produced artifacts:** isolated validation workers, safe technique
   packages, evidence bundles, conformance suites.
 - **Current status:** **Proposed, overlapping**; absent. Repository-level isolation
-  may be justified by risk, but an ADR must compare it with ownership inside
-  `cybersecgpt-security`.
+  may be reconsidered if a distinct assurance lifecycle is demonstrated; ADR-0007
+  keeps current ownership in `cybersecgpt-security`. Approval is **Deferred**.
 
 ### `cybersecgpt-enterprise`
 
@@ -640,8 +653,8 @@ These names do not exist. A proposal does not authorize creating the repository.
 - **Likely produced artifacts:** enterprise service packages and administration
   integrations.
 - **Current status:** **Proposed, overlapping**; absent. Prefer
-  `cybersecgpt-platform` as owner unless a packaging or access-control boundary is
-  accepted.
+  `cybersecgpt-platform` as owner under ADR-0008. Approval is **Deferred** unless
+  a packaging or access-control boundary is accepted by a later ADR.
 
 ### `cybersecgpt-licensing`
 
@@ -659,7 +672,8 @@ These names do not exist. A proposal does not authorize creating the repository.
 - **Likely produced artifacts:** entitlement service/library, signed license
   tokens, conformance suites.
 - **Current status:** **Proposed, overlapping**; absent. Governance should own
-  policy and platform can initially enforce it; separate only by ADR.
+  policy and platform enforces it under ADR-0008. Approval is **Deferred**;
+  separate only by a later ADR.
 
 ### `cybersecgpt-cloud`
 
@@ -678,29 +692,29 @@ These names do not exist. A proposal does not authorize creating the repository.
 - **Likely produced artifacts:** cloud overlays, deployment profiles, cost and
   recovery guidance.
 - **Current status:** **Proposed, overlapping**; absent. Prefer
-  `cybersecgpt-infrastructure` plus `cybersecgpt-devops` until a distinct product
-  boundary is demonstrated.
+  `cybersecgpt-infrastructure` plus `cybersecgpt-devops` under ADR-0009. Approval
+  is **Deferred** until a distinct product boundary is demonstrated.
 
-## Overlap decisions required
+## Overlap decisions
 
-| Overlap | Default direction | Decision still required |
+| Overlap | Accepted direction | Reconsideration trigger or remaining action |
 | --- | --- | --- |
-| `cybersecgpt-bootstrap` / `cybersecgpt-bootstrap-py` | consolidate on the active `cybersecgpt-bootstrap` implementation | migration and archival plan |
-| `cybersecgpt-foundation` / `cybersecgpt-core` | use foundation | whether the umbrella `cybersecgpt` meta-package needs any shared code |
-| `cybersecgpt-foundation` / `cybersecgpt-model` | begin in foundation or rename deliberately; do not duplicate | long-term model architecture owner |
-| `cybersecgpt-reasoning` / `cybersecgpt-agents` | reasoning owns the initial agent framework | whether orchestration scale warrants a later split |
-| `cybersecgpt-security` / `cybersecgpt-security-engine` | security owns policy and initial execution boundary | whether engine isolation becomes a subordinate repository |
-| `cybersecgpt-security` / `cybersecgpt-exploit-validation` | keep policy in security | whether high-risk validation requires isolated ownership |
-| `cybersecgpt-platform` / `cybersecgpt-enterprise` | platform owns enterprise control-plane concerns | commercial packaging boundary |
-| infrastructure / DevOps / cloud | infrastructure owns resources; DevOps owns delivery; no cloud repo initially | whether curated cloud profiles become a separate product |
-| governance / licensing | governance owns policy; platform initially enforces | whether a standalone entitlement service is required |
+| `cybersecgpt-bootstrap` / `cybersecgpt-bootstrap-py` | consolidate on the active `cybersecgpt-bootstrap` implementation | complete migration inventory and obtain archival authority |
+| `cybersecgpt-foundation` / `cybersecgpt-core` | use foundation; core is deferred | demonstrate a non-duplicate lower-level contract and lifecycle |
+| `cybersecgpt-foundation` / `cybersecgpt-model` | foundation owns model contracts under ADR-0005; model is deferred | demonstrate model definitions require a distinct dependency or release lifecycle |
+| `cybersecgpt-reasoning` / `cybersecgpt-agents` | reasoning owns the agent runtime under ADR-0006; agents is deferred | demonstrate a one-way split without duplicated lifecycle or plan contracts |
+| `cybersecgpt-security` / `cybersecgpt-security-engine` | security owns policy and execution under ADR-0007; engine is deferred | demonstrate an independent assurance or access-control lifecycle |
+| `cybersecgpt-security` / `cybersecgpt-exploit-validation` | security owns isolated authorized validation under ADR-0007; validation is deferred | demonstrate repository separation adds controls unavailable through process isolation |
+| `cybersecgpt-platform` / `cybersecgpt-enterprise` | platform owns enterprise control-plane concerns under ADR-0008; enterprise is deferred | establish a distinct packaging or access-control boundary |
+| infrastructure / DevOps / cloud | infrastructure owns resources and overlays; DevOps owns delivery under ADR-0009; cloud is deferred | establish a separately supported cloud product lifecycle |
+| governance / licensing | governance owns approved policy; platform enforces under ADR-0008; licensing is deferred | approve licensing policy and demonstrate a standalone entitlement lifecycle |
 
 ## Organization-wide unresolved decisions
 
 - Source, documentation, model, weight, tokenizer, and dataset licenses.
 - Repository consolidation and archival authority.
-- Model architecture owner and concrete checkpoint encodings.
+- Concrete checkpoint containers and tensor encodings.
 - Language/runtime support matrix and package coordinates.
 - Policy signing, artifact signing, and trust-root ownership.
-- Whether authorized validation requires a separate repository and process boundary.
-- Enterprise packaging, entitlement, and cloud product boundaries.
+- Evidence thresholds that would justify reopening deferred repository splits.
+- Enterprise packaging, entitlement behavior, and managed-cloud product scope.

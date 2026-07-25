@@ -28,7 +28,16 @@ Every architecture document uses the following meanings:
 - [System overview](docs/architecture/system-overview.md)
 - [Independent AI principles](docs/architecture/independent-ai-principles.md)
 - [Repository map](docs/architecture/repository-map.md)
+- [Repository approval matrix](docs/architecture/repository-approval-matrix.md)
 - [Dependency graph](docs/architecture/dependency-graph.md)
+
+## Architecture decisions
+
+The [ADR index](docs/decisions/README.md) records accepted decisions for
+independent AI operation, repository ownership, dependency direction, model and
+agent ownership, security, enterprise, infrastructure, and artifact/event
+contracts. An accepted ADR defines an authoritative direction; it does not claim
+that the affected implementation is complete.
 
 ## Engineering standards
 

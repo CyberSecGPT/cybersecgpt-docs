@@ -6,10 +6,10 @@ This is a **stable conceptual contract proposal**. It defines ownership,
 invariants, and compatibility semantics for first-party models. No concrete schema,
 ABI, model architecture, or implementation is claimed production-ready.
 
-The authoritative implementation owner is **Unresolved** between the existing
-`cybersecgpt-foundation` repository and the absent proposed
-`cybersecgpt-model` repository. See the
-[repository map](../architecture/repository-map.md).
+The authoritative implementation owner is `cybersecgpt-foundation` under
+[ADR-0005](../decisions/ADR-0005-model-ownership.md). The absent proposed
+`cybersecgpt-model` repository is deferred. Ownership does not imply that a
+production implementation exists.
 
 ## Goals
 
@@ -206,7 +206,7 @@ the [logging standard](../standards/logging-standard.md).
 
 ## Unresolved decisions
 
-- Model architecture owner and first architecture.
+- First model architecture.
 - Concrete descriptor schema and canonical encoding.
 - Parameter naming conventions.
 - Determinism guarantees across devices.

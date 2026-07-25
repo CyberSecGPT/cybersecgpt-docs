@@ -8,7 +8,10 @@
 - **Established:** cybersecurity actions require explicit authorization, target
   scope, operator identity, policy enforcement, auditability, and bounded
   execution.
-- **Proposed:** the layered component boundaries and flows in this document.
+- **Established:** the repository layers and ownership boundaries are accepted by
+  the [architecture decisions](../decisions/README.md).
+- **Proposed:** concrete implementations and deployment technologies for the
+  flows in this document.
 - **Observed:** as of 2026-07-25, most named repositories are empty placeholders;
   architecture should not be mistaken for implemented capability.
 
@@ -70,20 +73,22 @@ consume versioned contract artifacts; they must not import documentation tooling
 This plane owns dataset manifests, tokenizer artifacts, model architecture,
 training, checkpoints, evaluation inputs, inference, and hardware-aware execution.
 Training and inference share contracts and artifacts, not private implementation
-modules.
+modules. Foundation owns model definitions and logical checkpoint contracts;
+domain repositories own lifecycle implementations.
 
 ### Intelligence plane
 
 Reasoning, agent orchestration, memory, and tool discovery coordinate bounded work.
-Reasoning proposes actions. It cannot grant authorization or bypass tool policy.
-Memory is governed state, not an unbounded transcript dump.
+Reasoning owns the agent lifecycle and proposes actions. It cannot grant
+authorization or bypass tool policy. Memory is governed state, not an unbounded
+transcript dump.
 
 ### Security plane
 
 The security plane evaluates policy, enforces authorization and target scope,
 controls approved techniques, applies rate and timeout limits, and preserves
-evidence. An authorized validation subsystem may be isolated further, but no
-separate repository is considered implemented today.
+evidence. `cybersecgpt-security` owns this boundary. Authorized validation workers
+may be isolated further without creating a second contract owner.
 
 ### Product and enterprise plane
 
@@ -91,13 +96,15 @@ CLI, SDK, API, web, desktop, and platform services expose stable workflows.
 Enterprise concerns include tenancy, identity federation, policy administration,
 deployment controls, quotas, supportability, and licensing enforcement. Product
 surfaces call public contracts; they do not reach into model or security internals.
+Platform owns enforcement while governance owns policy intent and approval.
 
 ### Operational plane
 
 Infrastructure definitions, delivery automation, observability, backup, recovery,
 and cloud deployment consume released artifacts. Production source code must not
 depend on deployment repositories. Operational policy must not silently redefine
-application authorization policy.
+application authorization policy. Infrastructure owns resource definitions and
+cloud overlays; DevOps owns delivery; monitoring owns operational observation.
 
 ## Primary flows
 
@@ -196,14 +203,17 @@ destinations, and model loading are explicit validation boundaries.
 
 - [Independent AI principles](independent-ai-principles.md)
 - [Repository map](repository-map.md)
+- [Repository approval matrix](repository-approval-matrix.md)
 - [Dependency graph](dependency-graph.md)
+- [Architecture decision records](../decisions/README.md)
 - [Authorization model](../security/authorization-model.md)
 - [Model contract](../specifications/model-contract.md)
 - [Event contract](../specifications/event-contract.md)
 
 ## Unresolved decisions
 
-- Final repository consolidations and names.
+- Physical bootstrap repository consolidation and archival authority.
+- Evidence required to justify future repository splits.
 - Initial model families, parameter scales, and accelerator support.
 - Concrete schema language and registry technology.
 - Dataset licensing and model-output usage policy.
