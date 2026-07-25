@@ -30,6 +30,7 @@ Every architecture document uses the following meanings:
 - [Repository map](docs/architecture/repository-map.md)
 - [Repository approval matrix](docs/architecture/repository-approval-matrix.md)
 - [Dependency graph](docs/architecture/dependency-graph.md)
+- [Architecture change gate](docs/governance/architecture-change-gate.md)
 
 ## Architecture decisions
 
