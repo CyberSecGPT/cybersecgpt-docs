@@ -32,3 +32,6 @@ docs/_build/
 # Temporary files
 *.tmp
 *.bak
+
+# Local backup files
+*.bak
