@@ -1,0 +1,14 @@
+# BEGIN CYBERSECGPT POLICY V2.1 EOL
+.gitattributes text eol=lf
+AGENTS.md text eol=lf
+CYBERSECGPT_MASTER_SYSTEM_INSTRUCTIONS.md -text
+CYBERSECGPT_MASTER_AUTONOMOUS_AI_BRAIN_SPECIFICATION.md text eol=lf
+CYBERSECGPT_DEEP_REASONING_BRAIN_IMPLEMENTATION_DIRECTIVE.md text eol=lf
+install_cybersecgpt_agent_directives.py text eol=lf
+.cybersecgpt/agent-policy.lock.json text eol=lf
+.github/copilot-instructions.md text eol=lf
+.github/workflows/cybersecgpt-agent-policy.yml text eol=lf
+engineering/CYBERSECGPT_MASTER_SYSTEM_INSTRUCTIONS.md -text
+engineering/CYBERSECGPT_MASTER_AUTONOMOUS_AI_BRAIN_SPECIFICATION.md text eol=lf
+engineering/CYBERSECGPT_DEEP_REASONING_BRAIN_IMPLEMENTATION_DIRECTIVE.md text eol=lf
+# END CYBERSECGPT POLICY V2.1 EOL
