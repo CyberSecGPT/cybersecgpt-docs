@@ -31,6 +31,7 @@ define a boundary whose repository is still empty.
 | [ADR-0008](ADR-0008-enterprise-and-governance-boundaries.md) | Enterprise and Governance Boundaries | Accepted |
 | [ADR-0009](ADR-0009-cloud-and-infrastructure-boundaries.md) | Cloud and Infrastructure Boundaries | Accepted |
 | [ADR-0010](ADR-0010-artifact-and-event-contracts.md) | Artifact and Event Contracts | Accepted |
+| [ADR-0011](ADR-0011-native-brain-system-architecture.md) | Native Brain System Architecture | Proposed |
 
 ## Governance
 
