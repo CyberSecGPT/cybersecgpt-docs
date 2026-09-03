@@ -33,27 +33,26 @@ Every architecture document uses the following meanings:
 - [Dependency graph](docs/architecture/dependency-graph.md)
 - [Architecture change gate](docs/governance/architecture-change-gate.md)
 
-The Native Brain System document is a **Proposed P5 architecture** until
-ADR-0011 receives the required independent architecture and security acceptance
-review.
+The Native Brain System architecture is governed by **Accepted ADR-0011**. This
+acceptance approves the P5.1 conceptual architecture; it does not claim runtime,
+model, tokenizer, training, memory, retrieval, agent, or inference implementation.
 
 ## Architecture decisions
 
 The [ADR index](docs/decisions/README.md) records accepted decisions for
 independent AI operation, repository ownership, dependency direction, model and
-agent ownership, security, enterprise, infrastructure, and artifact/event
-contracts, together with proposed decisions under review. An accepted ADR defines
-an authoritative direction; it does not claim that the affected implementation is
-complete.
+agent ownership, security, enterprise, infrastructure, artifact/event contracts,
+and the Native Brain architecture. An accepted ADR defines an authoritative
+direction; it does not claim that the affected implementation is complete.
 
 ## P5 review evidence
 
 - [P5 Native Brain independent review checklist](docs/reviews/p5-native-brain-independent-review-checklist.md)
+- [P5 Native Brain independent acceptance record](docs/reviews/p5-native-brain-independent-review-acceptance-2026-09-03.md)
 
-The checklist defines objective architecture, security, conformance, native-
-independence, reviewer-independence, commit-binding, and acceptance requirements
-for ADR-0011. Automated validation does not substitute for that independent final
-review.
+The acceptance record binds the project-owner architecture/security decision to
+the reviewed P5.1 commit. Later semantic architecture/security changes require a
+new or renewed review under the architecture change gate.
 
 ## Engineering standards
 
@@ -87,8 +86,9 @@ theft, persistence, evasion, destructive actions, or unauthorized access.
 
 These specifications establish conceptual boundaries and compatibility rules.
 They do not assert that a wire format, implementation, or artifact is currently
-production-ready. The Native Brain conformance profile is **Proposed** while
-ADR-0011 is under review.
+production-ready. The Native Brain conformance profile is governed by Accepted
+ADR-0011 and remains a conceptual contract until executable owner repositories
+implement and verify its interfaces.
 
 ## Repository evidence
 
