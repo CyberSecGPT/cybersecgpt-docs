@@ -26,19 +26,33 @@ Every architecture document uses the following meanings:
 ## Architecture
 
 - [System overview](docs/architecture/system-overview.md)
+- [Native Brain System architecture](docs/architecture/native-brain-system.md)
 - [Independent AI principles](docs/architecture/independent-ai-principles.md)
 - [Repository map](docs/architecture/repository-map.md)
 - [Repository approval matrix](docs/architecture/repository-approval-matrix.md)
 - [Dependency graph](docs/architecture/dependency-graph.md)
 - [Architecture change gate](docs/governance/architecture-change-gate.md)
 
+The Native Brain System architecture is governed by **Accepted ADR-0011**. This
+acceptance approves the P5.1 conceptual architecture; it does not claim runtime,
+model, tokenizer, training, memory, retrieval, agent, or inference implementation.
+
 ## Architecture decisions
 
 The [ADR index](docs/decisions/README.md) records accepted decisions for
 independent AI operation, repository ownership, dependency direction, model and
-agent ownership, security, enterprise, infrastructure, and artifact/event
-contracts. An accepted ADR defines an authoritative direction; it does not claim
-that the affected implementation is complete.
+agent ownership, security, enterprise, infrastructure, artifact/event contracts,
+and the Native Brain architecture. An accepted ADR defines an authoritative
+direction; it does not claim that the affected implementation is complete.
+
+## P5 review evidence
+
+- [P5 Native Brain independent review checklist](docs/reviews/p5-native-brain-independent-review-checklist.md)
+- [P5 Native Brain independent acceptance record](docs/reviews/p5-native-brain-independent-review-acceptance-2026-09-03.md)
+
+The acceptance record binds the project-owner architecture/security decision to
+the reviewed P5.1 commit. Later semantic architecture/security changes require a
+new or renewed review under the architecture change gate.
 
 ## Engineering standards
 
@@ -53,6 +67,7 @@ that the affected implementation is complete.
 
 - [Authorization model](docs/security/authorization-model.md)
 - [Scope enforcement](docs/security/scope-enforcement.md)
+- [Native Brain threat model](docs/security/native-brain-threat-model.md)
 - [Secure development](docs/security/secure-development.md)
 
 Cybersecurity functionality is limited to authorized, scoped, policy-controlled
@@ -67,10 +82,13 @@ theft, persistence, evasion, destructive actions, or unauthorized access.
 - [Agent contract](docs/specifications/agent-contract.md)
 - [Tool contract](docs/specifications/tool-contract.md)
 - [Event contract](docs/specifications/event-contract.md)
+- [Native Brain conformance profile](docs/specifications/native-brain-conformance-profile.md)
 
 These specifications establish conceptual boundaries and compatibility rules.
 They do not assert that a wire format, implementation, or artifact is currently
-production-ready.
+production-ready. The Native Brain conformance profile is governed by Accepted
+ADR-0011 and remains a conceptual contract until executable owner repositories
+implement and verify its interfaces.
 
 ## Repository evidence
 

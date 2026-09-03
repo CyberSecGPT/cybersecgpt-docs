@@ -5,17 +5,23 @@ required_files=(
   "README.md"
   "CONTRIBUTING.md"
   "docs/architecture/system-overview.md"
+  "docs/architecture/native-brain-system.md"
   "docs/architecture/repository-map.md"
   "docs/architecture/repository-approval-matrix.md"
   "docs/architecture/dependency-graph.md"
   "docs/governance/architecture-change-gate.md"
   "docs/decisions/README.md"
+  "docs/decisions/ADR-0011-native-brain-system-architecture.md"
+  "docs/security/native-brain-threat-model.md"
   "docs/specifications/model-contract.md"
   "docs/specifications/tokenizer-contract.md"
   "docs/specifications/checkpoint-format.md"
   "docs/specifications/agent-contract.md"
   "docs/specifications/tool-contract.md"
   "docs/specifications/event-contract.md"
+  "docs/specifications/native-brain-conformance-profile.md"
+  "docs/reviews/p5-native-brain-independent-review-checklist.md"
+  "docs/reviews/p5-native-brain-independent-review-acceptance-2026-09-03.md"
 )
 
 echo "Checking required architecture files..."
@@ -44,6 +50,19 @@ for adr in docs/decisions/ADR-*.md; do
     exit 1
   fi
 done
+
+echo "Checking ADR-0011 acceptance state..."
+
+if ! grep -q '\*\*Accepted\*\* — 2026-09-03' \
+  docs/decisions/ADR-0011-native-brain-system-architecture.md; then
+  echo "ERROR: ADR-0011 is not recorded as Accepted on 2026-09-03." >&2
+  exit 1
+fi
+
+if ! grep -q '| \[ADR-0011\].*| Accepted |' docs/decisions/README.md; then
+  echo "ERROR: ADR index does not record ADR-0011 as Accepted." >&2
+  exit 1
+fi
 
 echo "Checking Markdown relative links..."
 
@@ -95,6 +114,53 @@ if errors:
     raise SystemExit(1)
 
 print(f"Validated relative links in {len(files)} Markdown files.")
+PY
+
+echo "Checking P5 independent-review evidence contract..."
+
+python - <<'PY'
+from pathlib import Path
+
+checklist = Path("docs/reviews/p5-native-brain-independent-review-checklist.md")
+checklist_text = checklist.read_text(encoding="utf-8")
+required_checklist_markers = (
+    "## Independence declaration",
+    "## Architecture review",
+    "## Security review",
+    "## Conformance-contract review",
+    "## Native-independence review",
+    "## Hardening verification",
+    "## Review decision",
+    "Reviewed commit SHA:",
+    "ACCEPT",
+    "REQUEST CHANGES",
+    "DEFER",
+)
+
+missing = [marker for marker in required_checklist_markers if marker not in checklist_text]
+if missing:
+    for marker in missing:
+        print(f"ERROR: P5 review checklist missing required marker: {marker}")
+    raise SystemExit(1)
+
+acceptance = Path("docs/reviews/p5-native-brain-independent-review-acceptance-2026-09-03.md")
+acceptance_text = acceptance.read_text(encoding="utf-8")
+required_acceptance_markers = (
+    "**ACCEPT**",
+    "Reviewed commit SHA: `4ebc4e86b6ab2231d2cc795002b42b8291995ca9`",
+    "Authorization authority outside router choice: **PASS**",
+    "Non-downgradable effective classification: **PASS**",
+    "Bound and expiring routing decisions: **PASS**",
+    "Blocking findings: none stated",
+)
+
+missing = [marker for marker in required_acceptance_markers if marker not in acceptance_text]
+if missing:
+    for marker in missing:
+        print(f"ERROR: P5 acceptance record missing required marker: {marker}")
+    raise SystemExit(1)
+
+print("P5 independent-review checklist and acceptance evidence validated.")
 PY
 
 echo "Checking whitespace and conflict markers..."
