@@ -52,9 +52,15 @@ A conforming design MUST preserve all of the following:
   installed;
 - model output, retrieved content, memory, and tool output are untrusted data;
 - a model or router cannot create or widen authorization;
+- the authoritative security-policy/authorization evaluator is outside router
+  choice and cannot be selected, replaced, or bypassed by routing;
+- effective data classification is derived or validated by authoritative policy
+  and metadata and cannot be downgraded by user content, model output, routing,
+  fallback, memory, retrieval, or tool output;
 - privileged actions fail closed when authorization, scope, capability, policy,
-  or required evidence cannot be validated;
-- routing decisions are structured, observable, versioned, and bounded;
+  classification, or required evidence cannot be validated;
+- routing decisions are structured, observable, versioned, bounded, explicitly
+  bound to their request/security context, and time-limited;
 - reasoning budgets have explicit ceilings and stop conditions;
 - verification is separable from generation;
 - evidence and provenance are distinguishable from model inference;
@@ -67,13 +73,14 @@ A conforming design MUST preserve all of the following:
 flowchart TB
     Request[Request + task metadata]
     Context[Identity / security context / classification / budgets]
+    SecurityPolicy[Authoritative security policy / authorization]
     Validate[Validation and normalization]
     Router[Intelligence Router]
 
     Neural[Native neural models]
     Knowledge[Knowledge / retrieval]
     Classical[Classical and statistical ML]
-    Rules[Rules / policy / schemas]
+    Rules[Domain rules / schemas]
     Symbolic[Symbolic / numeric / graph engines]
     Reasoning[Reasoning control / planner / search]
     Memory[Governed memory]
@@ -83,7 +90,9 @@ flowchart TB
     Decision[Accept / revise / defer / refuse]
     Output[Result + evidence + assurance metadata]
 
-    Request --> Context --> Validate --> Router
+    Request --> Context --> SecurityPolicy --> Validate --> Router
+    SecurityPolicy --> Router
+    SecurityPolicy --> Tools
     Router --> Neural
     Router --> Knowledge
     Router --> Classical
@@ -106,6 +115,13 @@ flowchart TB
 
 The diagram is logical. It does not imply that every task uses every component or
 that the components are separate processes.
+
+The `Domain rules / schemas` substrate represents routable deterministic domain
+logic such as parsers, validation rules, or task-specific rule engines. The
+authoritative security-policy/authorization evaluator is a separate trusted
+control-plane authority. The Intelligence Router consumes its constraints and
+current decisions; the router MUST NOT select, replace, disable, or bypass the
+authorizer.
 
 ## Repository ownership
 
@@ -137,16 +153,22 @@ At minimum the controller must be able to represent:
 - request and correlation identity;
 - task type and domain;
 - task complexity;
-- safety impact and data classification;
+- safety impact and source/claimed data-classification metadata;
+- an authoritative effective data classification used for routing, storage,
+  execution, logging, and output handling;
 - identity/authorization references when privileged work is possible;
+- the relevant security-policy revision or immutable policy-decision reference;
 - latency, compute, memory, token, step, and deadline budgets;
 - required accuracy, determinism, and explainability where applicable;
-- offline requirement;
+- offline and provider/network policy requirements;
 - available capability snapshot; and
 - verification requirements.
 
-The free-form user request is data inside this envelope. It does not override
-machine-evaluable limits or authorization.
+The free-form user request and any classification labels contained within it are
+untrusted data inside this envelope. They do not override machine-evaluable
+limits, authorization, policy, or the authoritative effective classification.
+Unknown or conflicting classification must be resolved conservatively according
+to security policy rather than implicitly downgraded.
 
 ## Intelligence Router
 
@@ -159,12 +181,16 @@ It may route to:
 
 - CyberSecGPT native general/reasoning/code/cyber models when implemented;
 - embeddings, retrieval, reranking, or knowledge-graph services;
-- deterministic schema/rule/policy engines;
+- deterministic schema and domain-rule engines;
 - classical or statistical ML;
 - symbolic, constraint, numerical, compiler, parser, or graph engines;
 - governed memory;
 - secure tools; and
 - independent validators or verifier models.
+
+The authoritative security-policy/authorization evaluator is not a routable
+substrate. It supplies non-optional constraints and decisions that routing and
+side-effect execution must obey.
 
 ### Inputs
 
@@ -176,6 +202,8 @@ task_complexity
 domain
 safety_impact
 authorization_state
+security_policy_revision
+effective_data_classification
 uncertainty
 latency_budget
 compute_budget
@@ -185,11 +213,12 @@ required_accuracy
 required_determinism
 required_explainability
 offline_requirement
+provider_network_policy
 available_substrates
 available_tools
 available_knowledge
+capability_snapshot_id
 verification_requirements
-data_classification
 deadline
 ```
 
@@ -199,7 +228,14 @@ A routing decision is structured data and includes, as applicable:
 
 ```text
 routing_decision_id
+request_id
 router_policy_version
+security_policy_revision
+authorization_context_ref
+effective_data_classification
+offline_requirement
+provider_network_policy
+capability_snapshot_id
 selected_substrates
 selected_model_or_engine_versions
 reasoning_budget
@@ -210,18 +246,34 @@ resource_allocations
 fallback_policy
 decision_reason_codes
 decision_provenance
+created_at
+expires_at
 ```
 
 `decision_reason_codes` provide concise auditable factors such as capability
 match, deterministic requirement, offline requirement, security restriction, or
 resource ceiling. Conformance does not require logging private chain-of-thought.
 
+A routing decision is admitted only for the request and security state to which it
+is bound. Executable implementations must reject the decision and re-evaluate
+routing when it is expired or when its request, authorization/security context,
+effective classification, provider/network policy, offline requirement,
+capability snapshot, or relevant policy revision no longer matches current state.
+Replanning creates a new linked routing decision; stale decisions are never
+silently replayed.
+
 ### Routing rules
 
 - Unknown capability is treated as unavailable, not assumed.
 - A route cannot widen the request authorization context.
+- The router cannot select, replace, disable, or bypass the authoritative
+  security-policy/authorization evaluator.
+- A route cannot lower effective data classification or weaken data-handling
+  requirements established by authoritative policy or metadata.
 - A route requiring a forbidden network dependency is rejected in offline mode.
 - A provider adapter is never an implicit fallback for the native core.
+- An expired or context-mismatched routing decision is rejected and replanned
+  under current policy rather than replayed.
 - Escalation to a more expensive substrate requires an allowed budget and a
   measurable reason such as capability mismatch, verification failure, or
   calibrated uncertainty.
@@ -296,8 +348,10 @@ PROPOSED ACTION
 → NORMALIZE
 → AUTHENTICATE / LOAD GRANT
 → SCOPE CHECK
-→ CURRENT POLICY DECISION
+→ CURRENT AUTHORITATIVE POLICY DECISION
+→ EFFECTIVE DATA-CLASSIFICATION CHECK
 → CAPABILITY CHECK
+→ ROUTING-DECISION BINDING / EXPIRY CHECK
 → EFFECTIVE RESOURCE LIMITS
 → ISOLATED PREPARATION
 → EXECUTION
@@ -308,7 +362,9 @@ PROPOSED ACTION
 
 Policy is checked at workflow admission and again immediately before each side
 effect. An execution context is immutable except for consuming budgets or narrowing
-scope.
+scope. Routing metadata is not an authorization grant. Any authorization,
+classification, policy, provider/offline, or routing-binding mismatch at the
+side-effect boundary fails closed and requires a fresh admissible decision.
 
 ## Knowledge, retrieval, and memory boundary
 
@@ -328,6 +384,10 @@ P5 defines the capability boundary but does not select a knowledge-store
 implementation or create a new repository. Later retrieval work must remain fully
 capable of local/offline execution.
 
+Retrieved content, memory, model output, and tool output may add evidence that
+causes policy to raise handling requirements, but they cannot lower the effective
+data classification established by authoritative policy and metadata.
+
 ## Native neural boundary
 
 P5 does not select the first CyberSecGPT model architecture. When native models
@@ -340,6 +400,7 @@ A model:
 - does not execute side-effecting tools directly;
 - does not grant authorization;
 - does not reinterpret resource limits;
+- does not lower effective data classification;
 - does not silently call a remote provider; and
 - returns typed output with model/tokenizer identity and finish status.
 
@@ -354,7 +415,9 @@ resource constraints. A failure MUST NOT silently:
 - enable Internet access;
 - transmit data to a proprietary AI service;
 - reduce required verification;
+- lower effective data classification or weaken data-handling controls;
 - widen scope;
+- replay an expired or security-context-mismatched routing decision;
 - disable evidence collection; or
 - substitute an unverified model/artifact.
 
@@ -385,7 +448,9 @@ without storing sensitive payloads or private reasoning traces:
 
 - request/correlation identity;
 - component and contract versions;
-- routing decision and reason codes;
+- routing decision, binding state, expiry, and reason codes;
+- effective data classification and relevant security-policy revision where
+  permitted by logging policy;
 - reasoning-control policy and resource consumption;
 - authorization/policy references when applicable;
 - tool/evidence references;
@@ -402,13 +467,15 @@ The detailed threats and controls are defined in the
 [native-brain threat model](../security/native-brain-threat-model.md). The most
 important trust boundaries are:
 
-1. untrusted request/content to normalized controller state;
+1. untrusted request/content to normalized controller state and authoritative
+   effective classification;
 2. capability metadata/artifacts to router decisions;
-3. router/model/reasoning output to authorization and tool execution;
-4. tool observations to evidence and subsequent reasoning;
-5. memory/retrieval content to current decision state;
-6. model/checkpoint packages to execution; and
-7. local core to optional network/provider adapters.
+3. authoritative security policy to router constraints and side-effect admission;
+4. router/model/reasoning output to authorization and tool execution;
+5. tool observations to evidence and subsequent reasoning;
+6. memory/retrieval content to current decision state;
+7. model/checkpoint packages to execution; and
+8. local core to optional network/provider adapters.
 
 ## P5 architecture acceptance criteria
 
