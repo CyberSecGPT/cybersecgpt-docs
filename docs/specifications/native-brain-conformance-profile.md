@@ -57,9 +57,12 @@ Conceptual fields:
 | `domain` | domain classification such as general, code, cyber, retrieval, policy, numeric, graph |
 | `task_complexity` | bounded complexity category or metric |
 | `safety_impact` | policy-recognized impact/risk classification |
-| `data_classification` | handling classification for inputs and outputs |
+| `data_classification` | source or claimed handling label; untrusted unless supplied by an authoritative classification source |
+| `effective_data_classification` | authoritative non-downgradable handling classification used for routing, storage, execution, logging, and output controls |
 | `identity_context_ref` | authenticated identity reference when applicable |
 | `authorization_context_ref` | immutable execution authorization reference when privileged work is possible |
+| `security_policy_revision` | immutable revision or decision-set reference for authoritative policy constraints used at admission |
+| `provider_network_policy` | allowed provider/network class for the request, including explicit offline/native-core restrictions |
 | `latency_budget` | maximum allowed latency or deadline contribution |
 | `compute_budget` | bounded compute allowance |
 | `memory_budget` | bounded memory allowance |
@@ -75,7 +78,14 @@ Conceptual fields:
 
 An omitted or unknown permission field never implies unrestricted access.
 Free-form task content MUST NOT override machine-evaluable authorization,
-classification, deadline, or resource fields.
+classification, deadline, provider/network policy, or resource fields.
+
+`effective_data_classification` MUST be derived or validated from authoritative
+policy and trusted metadata. User, model, memory, retrieval, router, or tool
+content may provide evidence that causes classification to become more restrictive,
+but none of those sources may lower an authoritative effective classification.
+When classification is unknown or conflicting, handling MUST follow the configured
+conservative policy rather than an implicit downgrade.
 
 ### `SubstrateDescriptor`
 
@@ -88,7 +98,7 @@ Conceptual fields:
 | --- | --- |
 | `substrate_id` | stable namespaced identity |
 | `substrate_version` | immutable implementation/artifact revision |
-| `substrate_kind` | native model, retrieval, classical ML, rule engine, symbolic, graph, tool, memory, verifier, other approved class |
+| `substrate_kind` | native model, retrieval, classical ML, domain rule/schema engine, symbolic, graph, tool, memory, verifier, other approved routable class |
 | `owner` | authoritative repository/component owner |
 | `capabilities` | explicit supported operations |
 | `offline_capable` | whether operation requires no network/provider dependency |
@@ -104,6 +114,12 @@ Conceptual fields:
 Unknown capabilities MUST NOT be inferred. Self-described capability metadata from
 an untrusted source is not sufficient for registration or routing.
 
+The authoritative security-policy/authorization evaluator is not represented as a
+router-selectable `SubstrateDescriptor`. It is a trusted control-plane authority
+whose current constraints and decisions are consumed by admission, routing, and
+tool execution. Domain-specific rule or schema engines MAY be routable when their
+capabilities are otherwise valid.
+
 ### `RoutingDecision`
 
 Routing is represented as structured data rather than an opaque text decision.
@@ -115,6 +131,11 @@ routing_decision_id
 request_id
 router_policy_id
 router_policy_version
+security_policy_revision
+authorization_context_ref
+effective_data_classification
+provider_network_policy
+offline_requirement
 capability_snapshot_id
 selected_substrates
 execution_order_or_graph
@@ -133,6 +154,15 @@ expires_at
 A routing decision MUST be immutable once admitted. Replanning creates a new
 version/decision linked by causation.
 
+A routing decision is valid only while all security-relevant bindings remain
+current. At minimum executable contracts MUST bind and revalidate the decision
+against its `request_id`, authorization/security context, effective data
+classification, provider/network policy, offline requirement, capability snapshot,
+and relevant policy revision. Expired, replayed, or mismatched decisions MUST be
+rejected and replanned under current constraints. A stale decision MUST NOT be
+used as a mechanism to retain broader authorization, weaker classification, older
+provider permissions, or obsolete capability state.
+
 `decision_reason_codes` SHOULD use concise structured factors such as:
 
 ```text
@@ -146,6 +176,7 @@ PRIMARY_ROUTE_UNAVAILABLE
 VERIFICATION_ESCALATION
 UNCERTAINTY_ESCALATION
 DEADLINE_RESTRICTION
+STALE_DECISION_REJECTED
 ```
 
 Conformance MUST NOT depend on recording or exposing private chain-of-thought.
@@ -323,26 +354,48 @@ from verifier conclusions.
 ### Routing
 
 - The router MUST use validated substrate capability metadata.
-- The router MUST consider authorization/safety/data-handling constraints before
-  execution.
+- The router MUST consume authoritative authorization/security-policy constraints;
+  it MUST NOT select, replace, disable, or bypass the authoritative evaluator.
+- The router MUST consider authorization/safety/effective-classification and
+  data-handling constraints before execution.
 - The router MUST prefer a competent route within the request's budget rather than
   automatically selecting the largest model.
-- The router MUST NOT widen authorization, target scope, deadline, data access, or
-  resource ceilings.
+- The router MUST NOT widen authorization, target scope, deadline, data access,
+  provider/network permission, effective data classification, or resource ceilings.
+- A routing decision MUST be rejected after expiry or when its bound request,
+  authorization/security context, effective classification, provider/offline
+  policy, capability snapshot, or relevant policy revision changes.
 - Fallback is a new validated route and MUST satisfy the same security,
-  classification, verification, and offline requirements.
+  classification, verification, provider/network, and offline requirements.
 
 ### Authorization and tools
 
 - A prompt, model output, routing decision, memory record, retrieval result, or
   tool result MUST NOT create permission.
+- A routing decision MUST NOT be treated as the policy/authorization decision.
 - Privileged tool execution MUST use a currently valid immutable authorization
-  context and current policy decision.
+  context and current authoritative policy decision.
+- Scope, effective data classification, and routing-decision bindings MUST be
+  revalidated immediately before side effects where relevant state can change.
 - Scope MUST be revalidated immediately before side effects where the target can
   change.
 - Tool inputs and outputs MUST be typed and bounded.
-- Required isolation, evidence, or policy unavailability MUST fail closed for
-  privileged work.
+- Required isolation, evidence, policy, classification, or binding unavailability
+  MUST fail closed for privileged work.
+
+### Data classification
+
+- Source/user/model-provided classification labels are untrusted unless they come
+  from an authenticated authoritative classification source.
+- The effective data classification MUST be derived or validated according to
+  authoritative policy and trusted metadata.
+- Router, fallback, model, memory, retrieval, and tool output MUST NOT lower the
+  effective classification or weaken its required handling controls.
+- New evidence MAY cause classification to become more restrictive according to
+  policy.
+- Conflicting or unavailable classification state MUST follow conservative policy;
+  privileged work MUST fail closed when the required classification cannot be
+  established.
 
 ### Reasoning control
 
@@ -370,6 +423,7 @@ from verifier conclusions.
 - Persistent state MUST carry provenance, scope, access policy, version, and
   correction/deletion semantics appropriate to its owner.
 - Memory or retrieval content MUST NOT grant authorization.
+- Memory or retrieval content MUST NOT lower effective data classification.
 - Generated claims and retrieved evidence MUST remain distinguishable.
 
 ### Observability
@@ -377,9 +431,10 @@ from verifier conclusions.
 Conforming implementations SHOULD expose structured operational metadata for:
 
 - component/contract versions;
-- routing decision and reason codes;
+- routing decision, security bindings, expiry, and reason codes;
 - reasoning-control policy and budget consumption;
 - policy/authorization references where applicable;
+- effective data classification where logging policy permits;
 - evidence references;
 - verification status;
 - finish/cancellation/failure reason; and
@@ -397,9 +452,12 @@ INVALID_REQUEST
 UNAUTHORIZED
 OUT_OF_SCOPE
 POLICY_DENIED
+CLASSIFICATION_UNRESOLVED
+CLASSIFICATION_MISMATCH
 CAPABILITY_UNAVAILABLE
 INCOMPATIBLE_SUBSTRATE
 OFFLINE_ROUTE_UNAVAILABLE
+STALE_ROUTING_DECISION
 RESOURCE_LIMIT
 DEADLINE
 CANCELLED
@@ -425,16 +483,25 @@ P5 evidence should cover:
 - unknown task/capability handling;
 - deterministic fixture routing for known capability sets;
 - selection of a smaller competent substrate where policy specifies it;
+- proof that the router cannot select, replace, disable, or bypass the
+  authoritative security-policy/authorization evaluator;
 - offline-required routing;
 - unavailable/revoked/incompatible substrate handling;
-- data-classification restrictions; and
+- authoritative effective-classification restrictions and attempted downgrade
+  from user/model/retrieval/memory/tool content;
+- rejection of expired/replayed routing decisions;
+- rejection when authorization/security context, classification, provider/offline
+  policy, capability snapshot, or policy revision changes after admission; and
 - explicit fallback validation.
 
 ### Authorization and tool boundary
 
 - missing, expired, revoked, forged, cross-tenant, and out-of-scope grants;
 - prompt/model/retrieval/memory/tool-output attempts to widen scope;
+- prompt/model/retrieval/memory/tool-output attempts to downgrade effective data
+  classification;
 - revalidation immediately before side effects;
+- stale routing-decision rejection at the side-effect boundary;
 - required isolation/evidence unavailability;
 - rate/resource/deadline enforcement; and
 - cancellation, cleanup, rollback, and evidence preservation.
@@ -498,7 +565,7 @@ Breaking changes to the conceptual P5 contract require a new major contract
 version, migration guidance, a coexistence or transition strategy when executable
 consumers exist, rollback behavior, and an architecture review. Compatible
 additions must be explicitly optional and must not silently alter authorization,
-offline, or verification semantics.
+offline, classification, provider/network, or verification semantics.
 
 ## Unresolved implementation choices
 
