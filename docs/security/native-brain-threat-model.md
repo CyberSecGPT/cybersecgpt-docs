@@ -15,7 +15,11 @@ controls are already deployed.
 The Native Brain System must preserve:
 
 - explicit authorization and target scope for privileged actions;
-- integrity of routing, policy, capability, model, memory, and evidence metadata;
+- authoritative, non-router-selectable security-policy enforcement;
+- a non-downgradable effective data classification derived or validated from
+  authoritative policy and trusted metadata;
+- integrity and freshness of routing, policy, capability, model, memory, and
+  evidence metadata;
 - confidentiality of classified prompts, evidence, memory, credentials, and
   tenant data;
 - availability within bounded resource policies;
@@ -30,9 +34,11 @@ The Native Brain System must preserve:
 Assets include:
 
 - operator identity and authorization references;
-- target-scope and policy decisions;
+- target-scope and authoritative policy decisions;
+- security-policy revisions and policy-decision references;
+- effective data-classification state and provenance;
 - model, tokenizer, checkpoint, and capability identities;
-- routing policies and routing decisions;
+- routing policies, routing decisions, security-context bindings, and expiry;
 - reasoning-control budgets and state;
 - memory records and retrieval indexes;
 - tool descriptors, calls, results, credentials, and sandbox configuration;
@@ -47,8 +53,10 @@ Assets include:
 ### TB-01 — Untrusted input to normalized request
 
 User prompts, uploaded files, source code, logs, documents, webpages, datasets,
-model-generated text, and external content are untrusted until parsed,
-classified, normalized, and bounded.
+model-generated text, source-provided classification labels, and external content
+are untrusted until parsed, classified, normalized, and bounded. The effective
+data classification is derived or validated through authoritative policy and
+trusted metadata rather than accepted from free-form content.
 
 ### TB-02 — Capability/artifact metadata to routing
 
@@ -56,32 +64,42 @@ Model descriptors, tool descriptors, registry entries, memory metadata, retrieva
 metadata, and availability reports are untrusted until identity, version,
 integrity, compatibility, and policy checks complete.
 
-### TB-03 — Router/reasoning output to side-effect authority
+### TB-03 — Authoritative policy to routing and side-effect admission
+
+The security-policy/authorization evaluator is a trusted control-plane authority,
+not a router-selectable intelligence substrate. Routing consumes its constraints
+and current decisions but cannot choose, replace, disable, or bypass it.
+
+### TB-04 — Router/reasoning output to side-effect authority
 
 Routing decisions, plans, model tool-call proposals, and generated commands are
 proposal data. They cannot grant permission or bypass deterministic policy.
+Routing decisions are valid only while their bound request, authorization/security
+context, effective classification, provider/offline policy, capability snapshot,
+policy revision, and expiry remain current.
 
-### TB-04 — Tool gateway to operating environment or target
+### TB-05 — Tool gateway to operating environment or target
 
 Filesystem, process, network, account, repository, cloud, model-artifact, dataset,
 and cybersecurity target interactions cross a privileged side-effect boundary.
 
-### TB-05 — Tool/retrieval/memory observations back to reasoning
+### TB-06 — Tool/retrieval/memory observations back to reasoning
 
 Returned content may be attacker-controlled or stale. It is evidence or context,
-not instruction authority.
+not instruction authority. It may cause policy to raise handling restrictions but
+cannot lower the authoritative effective data classification.
 
-### TB-06 — Model/checkpoint package to execution
+### TB-07 — Model/checkpoint package to execution
 
 Model manifests, tensor shards, tokenizer artifacts, configuration, and optional
 extensions are untrusted supply-chain input until validated.
 
-### TB-07 — Native core to optional network/provider adapters
+### TB-08 — Native core to optional network/provider adapters
 
 The core/native boundary must prevent accidental data transmission or hidden
 replacement of CyberSecGPT intelligence with remote provider intelligence.
 
-### TB-08 — Tenant/security domain boundary
+### TB-09 — Tenant/security domain boundary
 
 Identity, memory, evidence, tool state, routing metadata, caches, and model inputs
 must not cross tenants or security compartments without explicit policy.
@@ -93,11 +111,14 @@ The design assumes possible adversaries include:
 - a malicious or compromised user supplying crafted prompts or files;
 - malicious content embedded in retrieved documents, repositories, logs, webpages,
   memory, or tool results;
+- an actor attempting to submit a falsely low data-classification label;
 - a compromised or malicious tool implementation;
 - poisoned datasets, retrieval indexes, capability registries, or memory records;
 - tampered model/checkpoint/tokenizer artifacts;
 - a compromised dependency or build artifact;
 - an authenticated actor attempting to exceed granted scope;
+- an actor replaying a routing decision after authorization, policy,
+  classification, provider/network rules, or capability state changed;
 - a tenant attempting cross-tenant data access;
 - a remote service attempting to induce provider dependency or data exfiltration;
 - an attacker seeking resource exhaustion or denial of service; and
@@ -122,20 +143,23 @@ it was produced by a CyberSecGPT model.
 | NB-T09 | Model or router self-authorizes a tool or widens target scope | Immutable execution authorization context; final policy check at tool boundary; scope revalidation; model/router cannot mint grants or credentials |
 | NB-T10 | Tool injection or arbitrary-command escape bypasses typed capability controls | Registered typed tools only; strict schemas; capability-specific APIs; sandboxing; least privilege; no undocumented direct shell/network escape |
 | NB-T11 | Tool output is forged, malicious, oversized, or used as executable instruction | Typed result schema; output size limits; evidence digests; treat output as untrusted observation; parser isolation |
-| NB-T12 | Cross-tenant or cross-compartment leakage through prompts, memory, caches, retrieval, evidence, or logs | Tenant-scoped identifiers and storage; cache partitioning; access control; data classification; redaction; cross-tenant negative tests |
+| NB-T12 | Cross-tenant or cross-compartment leakage through prompts, memory, caches, retrieval, evidence, or logs | Tenant-scoped identifiers and storage; cache partitioning; access control; authoritative data classification; redaction; cross-tenant negative tests |
 | NB-T13 | Secrets leak through prompts, logs, traces, evidence, provider adapters, or error messages | Secret-safe logging; minimal payload logging; protected evidence references; scoped ephemeral credentials; adapter data minimization; redaction tests |
 | NB-T14 | Resource-exhaustion attack consumes model tokens, candidate branches, tools, memory, GPU/CPU, storage, or network | Admission controls; reasoning budgets; token/step/tool ceilings; deadlines; per-tenant quotas; output limits; cancellation and safe stop |
 | NB-T15 | Recursive agents or reasoning loops fail to terminate | Explicit depth/fan-out/step ceilings; monotonic budget consumption; terminal-state rules; deadlines; cancellation propagation |
 | NB-T16 | Verifier gaming or self-review accepts unsupported conclusions | Separate verifier interface; independent/deterministic checks where feasible; evidence requirements; contradictory/insufficient states; high-impact review policy |
 | NB-T17 | Policy or verifier service unavailable and privileged action proceeds anyway | Fail closed for privileged work; bounded decision cache with expiry; no stale implicit allow; explicit unavailable status |
 | NB-T18 | Audit/evidence tampering hides denied or harmful actions | Append-oriented evidence; digests; access separation; immutable correlation IDs; protected storage; verification of evidence availability for high-risk tools |
-| NB-T19 | Race or time-of-check/time-of-use changes target, grant, DNS, scope, policy, or artifact identity after admission | Revalidate immediately before side effect; decision expiry; target resolution at action time; immutable artifact identity; active-work revocation checks |
+| NB-T19 | Race or time-of-check/time-of-use changes target, grant, DNS, scope, policy, classification, or artifact identity after admission | Revalidate immediately before side effect; decision expiry; target resolution at action time; immutable artifact identity; active-work revocation checks |
 | NB-T20 | Optional provider or plugin dependency becomes required for core startup or reasoning | Dependency audit; adapter inversion; core build/test without provider SDKs or credentials; offline conformance test |
 | NB-T21 | Malicious dependency, plugin, or build artifact compromises routing, tools, or models | Locked dependencies where appropriate; provenance/SBOM; artifact verification; restricted dynamic loading; supply-chain scanning and review |
 | NB-T22 | Unsafe model output produces harmful cybersecurity actions outside authorization | Authorized-use boundary; security policy; typed capabilities; explicit target-owner authorization; non-destructive defaults; rate/scope limits; human approval where required |
 | NB-T23 | Generated or retrieved content is misrepresented as verified fact | Evidence typing; provenance references; verification status; explicit uncertainty and limitations; verifier result separate from generator output |
 | NB-T24 | Rollback or cleanup exceeds scope or destroys evidence | Rollback declared in tool contract; separately authorized compensation; cleanup idempotency; evidence preserved; rollback verification |
 | NB-T25 | Private chain-of-thought or sensitive intermediate data is unnecessarily logged | Structured reason codes, plan facts, evidence references, and policy explanations; do not require private reasoning traces for observability |
+| NB-T26 | Router or compromised capability metadata substitutes, disables, or bypasses the authoritative authorization/security-policy evaluator | Authorizer is outside router-selectable substrate registry; configured trust anchor; router consumes immutable policy constraints/decision refs; tool boundary revalidates authoritative policy |
+| NB-T27 | User, model, memory, retrieval, fallback, or tool output downgrades data classification to route or disclose sensitive content under weaker controls | Derive/validate effective classification from authoritative policy/trusted metadata; treat content labels as untrusted; permit only policy-authorized escalation to more restrictive handling; revalidate at routing, storage, logging, adapter, and side-effect boundaries |
+| NB-T28 | Expired or replayed routing decision is reused after authorization, policy, classification, provider/offline policy, capability snapshot, or other security state changes | Bind routing decision to request and security context; immutable revision/snapshot refs; explicit expiry; reject mismatch/replay; replan under current policy; revalidate immediately before side effects |
 
 ## Router-specific controls
 
@@ -145,9 +169,17 @@ properties.
 
 A routing implementation MUST:
 
-- validate every substrate descriptor before selection;
-- bind the decision to a capability/policy snapshot or version;
-- include authorization and data-classification constraints in routing;
+- validate every routable substrate descriptor before selection;
+- treat the authoritative security-policy/authorization evaluator as a separate
+  trusted control-plane authority rather than a selectable substrate;
+- consume and preserve current authorization/security-policy constraints;
+- bind the decision to a capability snapshot or version;
+- bind the decision to request identity, authorization/security context,
+  authoritative effective classification, provider/network policy, offline
+  requirement, and relevant policy revision;
+- give the decision an explicit lifetime and reject it after expiry or binding
+  mismatch;
+- include authorization and effective data-classification constraints in routing;
 - reject required capabilities that are unavailable or unknown;
 - preserve offline requirements;
 - enforce a configured network/provider policy;
@@ -160,9 +192,14 @@ A routing implementation MUST:
 The router MUST NOT:
 
 - treat model confidence text as authorization;
+- select, replace, disable, or bypass the authoritative security-policy or
+  authorization evaluator;
+- lower effective data classification or required handling controls;
+- reuse an expired or security-context-mismatched routing decision;
 - select a provider solely because local execution failed;
 - lower a verification requirement to fit an available substrate;
-- enlarge a grant, target scope, deadline, or data-access boundary; or
+- enlarge a grant, target scope, deadline, provider/network permission, data-access
+  boundary, or resource ceiling; or
 - register a capability based only on untrusted self-description.
 
 ## Reasoning-control threats
@@ -193,12 +230,20 @@ and minimal unnecessary telemetry.
 
 No component may infer target authorization from a prompt, hostname, organization
 name, public accessibility, discovered ownership metadata, or prior authorization
-record. A currently valid machine-evaluable grant is required for privileged
-interaction.
+record. A currently valid machine-evaluable grant and authoritative policy decision
+are required for privileged interaction.
 
 ## Data and privacy controls
 
 - Classify data before storage, retrieval, model use, or adapter transmission.
+- Treat source/user/model-provided classification labels as untrusted unless they
+  are authenticated authoritative metadata.
+- Derive or validate an effective data classification using authoritative policy
+  and trusted metadata; do not permit router/model/retrieval/memory/tool content
+  to lower it.
+- Revalidate effective classification when new evidence, routing, fallback,
+  storage, logging, adapter transmission, or side effects cross handling
+  boundaries.
 - Store sensitive tool/evidence payloads in protected stores and pass references
   when practical.
 - Apply minimum necessary retention and access control to memory and evidence.
@@ -216,7 +261,9 @@ safe stop:
 - operator/service identity;
 - authorization grant;
 - target scope;
-- current policy;
+- current authoritative policy;
+- effective data classification;
+- routing-decision binding and freshness;
 - capability descriptor;
 - required isolation;
 - resource limits;
@@ -225,12 +272,13 @@ safe stop:
 
 For non-privileged reasoning, missing optional components may result in a bounded
 partial, unavailable, deferred, or uncertain result. The system must disclose the
-limitation and MUST NOT silently change network or trust policy.
+limitation and MUST NOT silently change network, classification, authorization, or
+trust policy. An expired or mismatched routing decision requires fresh admission
+and routing rather than implicit replay.
 
 ## Verification scenarios
 
-Later P5 executable implementations should support isolated tests covering at
-least:
+Later P5 executable implementations should support isolated tests covering at least:
 
 1. prompt injection cannot widen authorization;
 2. retrieved/tool/memory injection cannot invoke a tool directly;
@@ -248,8 +296,16 @@ least:
 13. verifier contradiction or insufficient evidence cannot be reported as
    verified support;
 14. unavailable policy/evidence services fail closed for privileged actions;
-15. fallback cannot lower verification, scope, or data-handling requirements; and
-16. cancellation preserves evidence and performs only authorized cleanup.
+15. fallback cannot lower verification, scope, data-classification, provider, or
+   data-handling requirements;
+16. cancellation preserves evidence and performs only authorized cleanup;
+17. the router cannot select, substitute, disable, or bypass the authoritative
+   security-policy/authorization evaluator;
+18. a falsely low user/model/retrieval/memory/tool classification label cannot
+   reduce the authoritative effective data classification; and
+19. an expired or replayed routing decision is rejected after authorization,
+   policy revision, effective classification, provider/offline policy, or
+   capability snapshot changes.
 
 Tests interacting with cybersecurity behavior must use isolated fixtures or
 explicitly authorized targets.
@@ -257,10 +313,11 @@ explicitly authorized targets.
 ## Residual risks
 
 Even with these controls, later implementations must account for model
-misclassification, unknown supply-chain flaws, imperfect confidence calibration,
-novel prompt/data injection, emergent interaction between multiple substrates,
-hardware/runtime vulnerabilities, and operator policy mistakes. P5 architecture
-reduces and contains these risks; it does not eliminate them.
+misclassification, classification-policy mistakes, unknown supply-chain flaws,
+imperfect confidence calibration, novel prompt/data injection, emergent interaction
+between multiple substrates, hardware/runtime vulnerabilities, stale or
+incorrectly versioned policy metadata, and operator policy mistakes. P5
+architecture reduces and contains these risks; it does not eliminate them.
 
 Residual risk acceptance for high-impact deployments belongs to governance and
 security review and must be based on measured implementation and TEVV evidence.
@@ -268,5 +325,6 @@ security review and must be based on measured implementation and TEVV evidence.
 ## Review requirement
 
 Because this document affects authorization, trust, tool execution, evidence,
-model loading, memory, provider isolation, and cross-tenant boundaries, a security
-review is required before ADR-0011 becomes Accepted.
+model loading, memory, provider isolation, data classification, routing freshness,
+and cross-tenant boundaries, a security review is required before ADR-0011 becomes
+Accepted.
