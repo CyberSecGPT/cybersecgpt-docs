@@ -34,7 +34,8 @@ Every architecture document uses the following meanings:
 - [Architecture change gate](docs/governance/architecture-change-gate.md)
 
 The Native Brain System document is a **Proposed P5 architecture** until
-ADR-0011 receives the required architecture and security review.
+ADR-0011 receives the required independent architecture and security acceptance
+review.
 
 ## Architecture decisions
 
@@ -44,6 +45,15 @@ agent ownership, security, enterprise, infrastructure, and artifact/event
 contracts, together with proposed decisions under review. An accepted ADR defines
 an authoritative direction; it does not claim that the affected implementation is
 complete.
+
+## P5 review evidence
+
+- [P5 Native Brain independent review checklist](docs/reviews/p5-native-brain-independent-review-checklist.md)
+
+The checklist defines objective architecture, security, conformance, native-
+independence, reviewer-independence, commit-binding, and acceptance requirements
+for ADR-0011. Automated validation does not substitute for that independent final
+review.
 
 ## Engineering standards
 
