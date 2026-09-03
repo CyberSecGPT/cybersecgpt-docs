@@ -20,6 +20,7 @@ required_files=(
   "docs/specifications/tool-contract.md"
   "docs/specifications/event-contract.md"
   "docs/specifications/native-brain-conformance-profile.md"
+  "docs/reviews/p5-native-brain-independent-review-checklist.md"
 )
 
 echo "Checking required architecture files..."
@@ -99,6 +100,36 @@ if errors:
     raise SystemExit(1)
 
 print(f"Validated relative links in {len(files)} Markdown files.")
+PY
+
+echo "Checking P5 independent-review evidence contract..."
+
+python - <<'PY'
+from pathlib import Path
+
+review = Path("docs/reviews/p5-native-brain-independent-review-checklist.md")
+text = review.read_text(encoding="utf-8")
+required_markers = (
+    "## Independence declaration",
+    "## Architecture review",
+    "## Security review",
+    "## Conformance-contract review",
+    "## Native-independence review",
+    "## Hardening verification",
+    "## Review decision",
+    "Reviewed commit SHA:",
+    "ACCEPT",
+    "REQUEST CHANGES",
+    "DEFER",
+)
+
+missing = [marker for marker in required_markers if marker not in text]
+if missing:
+    for marker in missing:
+        print(f"ERROR: P5 review checklist missing required marker: {marker}")
+    raise SystemExit(1)
+
+print("P5 independent-review evidence template validated.")
 PY
 
 echo "Checking whitespace and conflict markers..."
