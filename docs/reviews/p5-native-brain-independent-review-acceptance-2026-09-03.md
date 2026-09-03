@@ -68,6 +68,17 @@ conditions:
   designated owner repositories with repository-specific tests, security review,
   and evidence
 
+## Post-acceptance metadata boundary
+
+After the reviewed SHA was accepted, the branch received only acceptance/status,
+review-evidence, README/index, checklist, and CI-enforcement changes. Those changes
+do not alter the Native Brain architecture/security semantics reviewed at
+`4ebc4e86b6ab2231d2cc795002b42b8291995ca9`.
+
+Any semantic architecture/security edit after that reviewed SHA requires renewed
+independent review. Acceptance/status recording and CI enforcement of the accepted
+evidence do not require re-review when they do not modify technical semantics.
+
 ## Acceptance scope
 
 This acceptance approves the **P5.1 conceptual Native Brain architecture**. It does
@@ -77,6 +88,7 @@ implemented.
 
 The acceptance is bound to reviewed SHA
 `4ebc4e86b6ab2231d2cc795002b42b8291995ca9`. Subsequent edits that only record
-this acceptance, promote document status, or update review metadata do not alter
-the accepted architecture semantics. Any later semantic architecture/security
-change requires renewed review according to the architecture change gate.
+this acceptance, promote document status, update review metadata, or enforce the
+accepted evidence in CI do not alter the accepted architecture semantics. Any
+later semantic architecture/security change requires renewed review according to
+the architecture change gate.
