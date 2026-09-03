@@ -38,28 +38,34 @@ If accepted, CyberSecGPT will adopt the logical Native Brain System described in
 The Native Brain System consists of separable, testable planes:
 
 1. **Request and context plane** — validates task metadata, identity references,
-   security context, data classification, deadlines, resource budgets, and
+   security context, source/claimed data classification, authoritative effective
+   data classification, deadlines, resource budgets, provider/network policy, and
    offline requirements.
-2. **Intelligence Router** — chooses the smallest competent authorized substrate
+2. **Authoritative security-policy and authorization plane** — evaluates trusted
+   policy, identity, grants, scope, effective classification, and other mandatory
+   security constraints. It is a control-plane authority and is not selected,
+   replaced, disabled, or bypassed by the Intelligence Router.
+3. **Intelligence Router** — chooses the smallest competent authorized substrate
    or composition of substrates using structured capability, risk, resource, and
-   verification inputs.
-3. **Native neural plane** — CyberSecGPT-controlled model descriptors, tokenizer
+   verification inputs while consuming authoritative security constraints.
+4. **Native neural plane** — CyberSecGPT-controlled model descriptors, tokenizer
    bindings, weights, and model execution as later roadmap milestones implement
    them.
-4. **Knowledge and analytical plane** — retrieval, evidence stores, classical or
-   statistical ML, deterministic rules, symbolic/constraint solving, graph
-   engines, parsers, compilers, and other specialized computation.
-5. **Reasoning-control plane** — bounded planning, candidate search, adaptive
+5. **Knowledge and analytical plane** — retrieval, evidence stores, classical or
+   statistical ML, deterministic domain rules/schemas, symbolic/constraint
+   solving, graph engines, parsers, compilers, and other specialized computation.
+6. **Reasoning-control plane** — bounded planning, candidate search, adaptive
    reasoning budgets, revision, and synthesis.
-6. **Tool-execution plane** — typed capability-scoped tools behind authorization,
-   capability, scope, sandbox, resource, and evidence gates.
-7. **Verification plane** — independent validators, evidence checks, tests,
+7. **Tool-execution plane** — typed capability-scoped tools behind authorization,
+   capability, scope, classification, sandbox, resource, routing-binding, and
+   evidence gates.
+8. **Verification plane** — independent validators, evidence checks, tests,
    uncertainty handling, and accept/revise/defer decisions.
-8. **Memory plane** — governed, provenance-aware memory whose retrieved content is
+9. **Memory plane** — governed, provenance-aware memory whose retrieved content is
    treated as untrusted context rather than authority.
-9. **Observability and assurance plane** — records structured routing, policy,
-   version, resource, evidence, and verification metadata without requiring
-   private chain-of-thought disclosure.
+10. **Observability and assurance plane** — records structured routing, policy,
+    classification, version, resource, evidence, and verification metadata without
+    requiring private chain-of-thought disclosure.
 
 ### Ownership
 
@@ -74,15 +80,15 @@ This ADR does not create a new repository. Conceptual ownership remains in
 | Governed persistent memory | `cybersecgpt-memory` |
 | Tool registration, typed invocation, and policy-gated side effects | `cybersecgpt-tools` |
 | Generic device, isolation, cancellation, and resource primitives | `cybersecgpt-runtime` |
-| Security policy, authorization evaluation, target scope, security findings and evidence references | `cybersecgpt-security` |
+| Security policy, authorization evaluation, target scope, effective-classification policy, security findings and evidence references | `cybersecgpt-security` |
 | Offline/continuous TEVV suites, measurements, regression and promotion evidence | `cybersecgpt-evaluation` |
 | Product composition and user-facing orchestration | existing L4/L5 application owners |
 
 The Intelligence Router may consume public capability descriptors from multiple
 owners, but it does not take ownership of those implementations. Inference
 executes selected model work; it does not become the cross-substrate routing
-authority. Security policy decisions remain authoritative for privileged actions
-and cannot be replaced by routing or model output.
+authority. Security policy and authorization decisions remain authoritative for
+privileged actions and cannot be replaced by routing or model output.
 
 The implementation owner for a future dedicated knowledge/RAG service remains
 unresolved until the later retrieval milestone provides evidence for a repository
@@ -98,21 +104,45 @@ One architecture supports both local/offline/air-gapped and online/self-hosted
 profiles. Profiles may differ in scale and available CyberSecGPT-controlled
 substrates, but not in the ownership of core intelligence.
 
-### Authorization and trust
+### Authorization, classification, routing freshness, and trust
 
 Prompts, retrieved documents, memory, model output, source code, logs, webpages,
-threat feeds, and tool output are untrusted data. They MUST NOT create or widen
-permission.
+threat feeds, source-provided classification labels, and tool output are untrusted
+data. They MUST NOT create or widen permission.
+
+The authoritative security-policy/authorization evaluator is not a routable
+substrate. The router consumes its current constraints and decision references but
+MUST NOT choose, replace, disable, or bypass that authority. Domain-specific rule
+or schema engines may be routed when their capabilities are valid, but they do not
+become the platform authorizer merely because they are deterministic.
+
+The effective data classification used for routing, storage, logging, model/tool
+execution, adapter transmission, and output handling MUST be derived or validated
+from authoritative policy and trusted metadata. User, model, memory, retrieval,
+fallback, router, or tool content may cause policy to increase handling
+restrictions, but none of those sources may lower the effective classification.
+Unknown or conflicting classification is handled conservatively according to
+policy.
+
+A routing decision is immutable after admission and is valid only for the
+security state to which it was bound. Executable contracts MUST bind it to the
+request, authorization/security context, effective data classification,
+provider/network and offline policy, capability snapshot, relevant policy revision,
+and explicit lifetime. Expiry or any binding mismatch invalidates the decision
+and requires a fresh routing decision. Stale or replayed routing metadata cannot
+retain broader grants, weaker classification, or older provider permissions.
 
 Privileged execution follows the existing trusted path:
 
 ```text
 UNTRUSTED DATA
 → INTERPRET / PROPOSE
-→ POLICY CHECK
+→ AUTHORITATIVE POLICY CHECK
 → AUTHORIZATION
+→ EFFECTIVE CLASSIFICATION
 → CAPABILITY CHECK
 → SCOPE / RESOURCE CHECK
+→ ROUTING BINDING / EXPIRY CHECK
 → SANDBOX
 → EXECUTION
 → EVIDENCE
@@ -120,7 +150,8 @@ UNTRUSTED DATA
 ```
 
 A model or router may propose an action. It cannot grant itself authorization,
-mint credentials, widen target scope, or suppress evidence.
+mint credentials, widen target scope, lower classification, suppress evidence, or
+reuse an obsolete routing decision.
 
 ## Compatibility impact
 
@@ -129,6 +160,12 @@ model architecture, tokenizer algorithm, policy engine, sandbox backend, databas
 vector store, or provider SDK. Existing conceptual model, agent, tool, event, and
 authorization contracts remain valid.
 
+The hardening clarifications make explicit three security properties already
+consistent with existing contracts: authoritative authorization remains outside
+router choice, effective data classification is non-downgradable by untrusted
+content, and routing decisions are security-context-bound and expiring. No
+production runtime migration is introduced by these documentation changes.
+
 Later executable P5 interfaces MUST be implemented by the designated repository
 owners and MUST preserve the acyclic dependency direction established by
 ADR-0004.
@@ -136,15 +173,17 @@ ADR-0004.
 ## Security and privacy consequences
 
 Positive consequences include explicit authorization separation, provider
-independence, bounded resource use, evidence provenance, and a distinct verifier
-boundary. Costs include additional validation state, capability registries,
-version negotiation, and the need to protect routing metadata and evidence from
-tampering.
+independence, non-downgradable classification, bounded resource use, replay/stale
+routing resistance, evidence provenance, and a distinct verifier boundary. Costs
+include additional validation state, capability registries, policy/classification
+version negotiation, routing-context binding, and the need to protect routing
+metadata and evidence from tampering.
 
 The Native Brain System must fail closed for privileged actions when authorization,
-policy, scope, capability, or evidence requirements cannot be validated.
-Read-only reasoning may degrade according to policy but must report missing
-substrates or verification rather than silently changing trust assumptions.
+policy, scope, classification, routing freshness/bindings, capability, or evidence
+requirements cannot be validated. Read-only reasoning may degrade according to
+policy but must report missing substrates or verification rather than silently
+changing trust assumptions.
 
 ## Migration and rollback
 
@@ -181,6 +220,25 @@ no distinct release lifecycle has been demonstrated.
 
 Rejected because generated output is untrusted proposal data, not a source of
 permission.
+
+### Let the Intelligence Router choose the security authorizer
+
+Rejected because a security-critical route could otherwise substitute or bypass
+the control that is supposed to constrain that same routing decision. The router
+therefore consumes authoritative policy constraints rather than selecting its own
+authorizer.
+
+### Trust caller/model data-classification labels
+
+Rejected because attacker-controlled or model-generated labels could downgrade
+handling requirements. Effective classification must come from authoritative
+policy and trusted metadata and may only change according to that policy.
+
+### Reuse routing decisions until execution completes
+
+Rejected because authorization, policy, classification, provider permissions, or
+capability state can change after admission. Routing decisions require explicit
+security bindings and expiry, with revalidation before privileged side effects.
 
 ## Acceptance and follow-up
 
