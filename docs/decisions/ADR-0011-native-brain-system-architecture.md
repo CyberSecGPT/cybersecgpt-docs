@@ -2,7 +2,11 @@
 
 ## Status
 
-**Proposed** — 2026-09-02
+**Accepted** — 2026-09-03
+
+Independent project-owner architecture/security acceptance is recorded in
+[`p5-native-brain-independent-review-acceptance-2026-09-03.md`](../reviews/p5-native-brain-independent-review-acceptance-2026-09-03.md) against reviewed PR head
+`4ebc4e86b6ab2231d2cc795002b42b8291995ca9`.
 
 ## Context
 
@@ -28,7 +32,7 @@ a dependency cycle.
 
 ## Decision
 
-If accepted, CyberSecGPT will adopt the logical Native Brain System described in
+CyberSecGPT adopts the logical Native Brain System described in
 [the P5 architecture](../architecture/native-brain-system.md) and constrained by
 [the P5 threat model](../security/native-brain-threat-model.md) and
 [conformance profile](../specifications/native-brain-conformance-profile.md).
@@ -188,10 +192,12 @@ changing trust assumptions.
 ## Migration and rollback
 
 No production runtime migration is required for this documentation-only P5.1
-increment. If the ADR is rejected, the P5 documents can be removed without
-changing executable artifacts. If accepted, implementation proceeds incrementally
-in existing owner repositories with contract-versioning and rollback requirements
-for each executable change.
+increment. Implementation proceeds incrementally in existing owner repositories
+with contract-versioning and rollback requirements for each executable change.
+
+If this ADR is later superseded or deprecated, the replacement architecture must
+provide migration and rollback guidance before executable consumers change their
+accepted contract assumptions.
 
 ## Alternatives Considered
 
@@ -242,7 +248,10 @@ security bindings and expiry, with revalidation before privileged side effects.
 
 ## Acceptance and follow-up
 
-Before this ADR becomes Accepted, architecture review and security review are
-required. The P5 conformance profile defines the evidence expected from later
-implementations. Acceptance of this ADR does not claim those implementations
-exist.
+ADR-0011 is Accepted based on independent project-owner architecture/security
+acceptance of the P5.1 package at reviewed SHA
+`4ebc4e86b6ab2231d2cc795002b42b8291995ca9` on 2026-09-03. The P5 conformance
+profile defines the evidence expected from later executable implementations.
+
+Acceptance of this ADR approves the conceptual architecture only. It does not
+claim that the Native Brain runtime or later roadmap capabilities are implemented.
