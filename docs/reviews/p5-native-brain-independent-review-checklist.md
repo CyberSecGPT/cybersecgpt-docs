@@ -11,6 +11,14 @@ It is intentionally separate from authoring-agent pre-review. A person or agent
 that materially authored the P5 architecture package MUST NOT be treated as the
 sole final verifier.
 
+ADR-0011 was accepted on 2026-09-03 after the project owner issued an explicit
+`ACCEPT` decision against reviewed SHA
+`4ebc4e86b6ab2231d2cc795002b42b8291995ca9`. The resulting acceptance evidence is
+recorded in
+[`p5-native-brain-independent-review-acceptance-2026-09-03.md`](p5-native-brain-independent-review-acceptance-2026-09-03.md).
+This checklist remains the governing template for future renewed review if a later
+semantic architecture/security change invalidates that acceptance.
+
 ## Review target
 
 Review the complete P5.1 architecture package as one change set:
@@ -23,7 +31,10 @@ Review the complete P5.1 architecture package as one change set:
 
 The current review target is the head of PR #4. The reviewer MUST record the exact
 commit SHA reviewed. If the PR head changes after acceptance, the acceptance is
-stale until the reviewer confirms the new head or a new independent review occurs.
+stale until the reviewer confirms the new head or a new independent review occurs,
+unless the later commits are limited to recording the already-issued acceptance,
+status/index metadata, review evidence, or CI enforcement and do not alter reviewed
+architecture/security semantics.
 
 ## Independence declaration
 
