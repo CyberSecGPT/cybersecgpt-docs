@@ -13,6 +13,9 @@ semantics follow the [versioning standard](docs/standards/versioning-standard.md
 - Authorization, scope-enforcement, and secure-development requirements.
 - Conceptual contracts for models, tokenizers, checkpoints, agents, tools, and
   events.
+- Pending independent-review evidence for executable P5 closure across normalized
+  admission, discovery, routing, budgets, lifecycle, termination, fallback, and
+  verifier orchestration.
 
 ### Unresolved
 
