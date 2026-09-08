@@ -49,10 +49,13 @@ direction; it does not claim that the affected implementation is complete.
 
 - [P5 Native Brain independent review checklist](docs/reviews/p5-native-brain-independent-review-checklist.md)
 - [P5 Native Brain independent acceptance record](docs/reviews/p5-native-brain-independent-review-acceptance-2026-09-03.md)
+- [P5 executable closure and conformance record](docs/reviews/p5-executable-closure-conformance-2026-09-08.md)
 
 The acceptance record binds the project-owner architecture/security decision to
 the reviewed P5.1 commit. Later semantic architecture/security changes require a
-new or renewed review under the architecture change gate.
+new or renewed review under the architecture change gate. The executable closure
+record remains pending until an independent architecture owner and security
+reviewer accept its exact evidence revision; P6 remains blocked until then.
 
 ## Engineering standards
 
