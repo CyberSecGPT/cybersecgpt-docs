@@ -2,11 +2,13 @@
 
 ## Status
 
-**Pending independent architecture and security review**
+**Accepted — P5 complete**
 
-This record does not close P5 by itself. P5 may be declared complete only after an
-independent architecture owner and security reviewer accept this evidence against
-the exact revisions recorded below.
+Project-owner architecture and security acceptance was recorded on 2026-09-09 for
+the exact evidence revision `0b390c9d7f0fc2652779e5481ae7558af0a07008`.
+This metadata-only closure update does not change the reviewed evidence. P5 is
+formally complete and P6 may begin subject to its canonical contract and roadmap
+gates.
 
 ## Evidence scope
 
@@ -80,17 +82,19 @@ verifier execution, evidence authentication, privileged tools, persistent memory
 retrieval services, tokenizer artifacts, model weights, training, or later
 roadmap milestones. Those responsibilities remain with their accepted owners.
 
-## Required independent decision
+## Acceptance decision
 
-The architecture owner and security reviewer must verify:
+Rivaldo Kurbah, acting explicitly as CyberSecGPT project-owner architecture and
+security acceptance authority, recorded the following decision on
+[CyberSecGPT/cybersecgpt-docs PR #5](https://github.com/CyberSecGPT/cybersecgpt-docs/pull/5#issuecomment-5602260097):
 
-1. the exact Reasoning main revision and both cited CI runs;
-2. every capability row and cross-cutting finding above;
-3. consistency with Accepted ADR-0011, the Native Brain architecture, threat
-   model, and conformance profile; and
-4. absence of unresolved P5 architecture, security, conformance, packaging, or
-   documentation gaps.
+> I, Rivaldo Kurbah, acting as the CyberSecGPT project-owner architecture and
+> security acceptance authority, have reviewed PR #5 at exact head SHA
+> `0b390c9d7f0fc2652779e5481ae7558af0a07008`. I confirm that the P5 closure and
+> conformance evidence is accurate and consistent with ADR-0011, the Native Brain
+> architecture, threat model, and conformance profile. Decision: **ACCEPT**.
 
-Only an explicit **ACCEPT** decision recorded for this exact evidence revision may
-promote this record to accepted closure and unblock P6. Any semantic correction
-requires a new reviewed revision and invalidates earlier acceptance.
+The accepted revision contains the exact Reasoning main revision and cited CI
+runs, all ten capability rows, the cross-cutting findings, and the scope and
+limitations reviewed by the project owner. Any later semantic correction requires
+a new reviewed revision and renewed acceptance.
