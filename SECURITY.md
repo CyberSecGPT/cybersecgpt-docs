@@ -51,3 +51,10 @@ Security-sensitive components must follow:
 - [Error-handling standard](docs/standards/error-handling-standard.md)
 
 The absence of an implementation does not waive these requirements.
+
+Artifact signing, trust-root custody, publication, promotion, revocation, and
+consumer admission must follow the proposed
+[Artifact Trust and Promotion Contract](docs/specifications/artifact-trust-and-promotion-contract.md)
+and [ADR-0012](docs/decisions/ADR-0012-artifact-signing-and-promotion-trust.md)
+after they are accepted. Until then, repository content, CI success, a digest, a
+signature, or registry availability does not authorize distribution or loading.

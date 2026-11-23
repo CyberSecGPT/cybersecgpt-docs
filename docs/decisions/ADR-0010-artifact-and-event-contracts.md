@@ -96,6 +96,11 @@ defined coexistence window, conformance fixtures, and rollback behavior. Concret
 schema language, canonical encoding, registry, transport, retention, and delivery
 guarantees remain unresolved until separate decisions are accepted.
 
+Artifact signing, trust-root ownership, revocation, promotion states, and
+consumer admission are separately proposed by
+[ADR-0012](ADR-0012-artifact-signing-and-promotion-trust.md). They remain
+unresolved until that proposal is accepted.
+
 ## Consequences
 
 ### Positive

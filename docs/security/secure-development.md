@@ -63,6 +63,12 @@ security, compatibility, package, provenance, dependency, and secret checks.
 Artifacts identify source revision, build environment, dependencies, tests,
 signatures when configured, and rollback target.
 
+Artifact-signing and promotion implementations also follow the proposed
+[Artifact Trust and Promotion Contract](../specifications/artifact-trust-and-promotion-contract.md)
+after acceptance. They separate build, evaluation, governance, signing,
+publication, promotion, and consumer-admission identities and fail closed on
+missing, expired, revoked, contradictory, or unverifiable evidence.
+
 No component is promoted because a security scanner alone passed.
 
 ## AI-specific threats

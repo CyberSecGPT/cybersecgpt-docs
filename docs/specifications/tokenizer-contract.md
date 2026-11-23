@@ -104,6 +104,15 @@ random seed where meaningful, resource limits, and provenance.
 Training output is a candidate artifact plus descriptor, validation report, and
 content hashes. Training success is not artifact approval.
 
+### Release trust and promotion
+
+A tokenizer candidate remains unsigned and unapproved until the cross-repository
+[Artifact Trust and Promotion Contract](artifact-trust-and-promotion-contract.md)
+is accepted and its independent evaluation, governance, signing, publication,
+promotion, revocation, and consumer-admission gates all pass for the exact bytes.
+A tokenizer signature, digest, repository tag, registry path, or successful CI
+run cannot grant distribution permission or make a candidate Tokenizer v1.
+
 ## Special-token requirements
 
 Special tokens have stable named roles, exact IDs, and insertion rules. Roles may

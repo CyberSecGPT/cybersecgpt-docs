@@ -167,6 +167,9 @@ rollback, observability, and release evidence.
 
 - License and copyright policy.
 - Repository owners and required reviewer groups.
-- Default CI, artifact registry, and signing services.
+- Default CI and artifact-registry products. The portable artifact-signing trust
+  profile is proposed by
+  [ADR-0012](../decisions/ADR-0012-artifact-signing-and-promotion-trust.md), while
+  concrete services remain owner-specific choices.
 - Commit-signing and developer identity requirements.
 - Archive and retention policy for replaced repositories.

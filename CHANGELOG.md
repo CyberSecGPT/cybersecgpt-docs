@@ -17,6 +17,13 @@ semantics follow the [versioning standard](docs/standards/versioning-standard.md
   across normalized admission, discovery, routing, budgets, lifecycle,
   termination, fallback, and verifier orchestration.
 
+### Proposed
+
+- ADR-0012 and a cross-repository artifact trust/promotion contract selecting an
+  offline-capable OMS/DSSE/in-toto/Ed25519 signature profile, threshold TUF trust
+  root, explicit revocation, fail-closed consumer admission, and append-only
+  promotion/rollback states for P6.12 review.
+
 ### Unresolved
 
 - Organization-wide source-code and documentation licensing.

@@ -715,6 +715,9 @@ These names do not exist. A proposal does not authorize creating the repository.
 - Repository consolidation and archival authority.
 - Concrete checkpoint containers and tensor encodings.
 - Language/runtime support matrix and package coordinates.
-- Policy signing, artifact signing, and trust-root ownership.
+- Policy signing remains unresolved. Artifact signing, promotion, and trust-root
+  ownership are proposed by
+  [ADR-0012](../decisions/ADR-0012-artifact-signing-and-promotion-trust.md)
+  and remain unresolved until exact-head acceptance and merge.
 - Evidence thresholds that would justify reopening deferred repository splits.
 - Enterprise packaging, entitlement behavior, and managed-cloud product scope.

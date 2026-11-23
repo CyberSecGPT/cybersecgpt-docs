@@ -135,6 +135,13 @@ contract versions, and carries provenance sufficient for reproduction. Promotion
 to an approved registry is a policy decision, not an automatic consequence of a
 successful training job.
 
+The proposed
+[Artifact Trust and Promotion Contract](../specifications/artifact-trust-and-promotion-contract.md)
+and [ADR-0012](../decisions/ADR-0012-artifact-signing-and-promotion-trust.md)
+define the P6.12 signing, trust-root, revocation, promotion-state, and consumer-
+admission profile. Until they are accepted and implemented, no artifact is
+promoted merely because it was built, evaluated, hashed, signed, or uploaded.
+
 ### Authorized operation lifecycle
 
 ```mermaid
@@ -209,6 +216,7 @@ destinations, and model loading are explicit validation boundaries.
 - [Authorization model](../security/authorization-model.md)
 - [Model contract](../specifications/model-contract.md)
 - [Event contract](../specifications/event-contract.md)
+- [Artifact trust and promotion contract](../specifications/artifact-trust-and-promotion-contract.md)
 
 ## Unresolved decisions
 
