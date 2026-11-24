@@ -117,4 +117,7 @@ Owners publish machine-readable or generated matrices for:
 - Pre-`1.0` stability and support windows.
 - Long-term-support cadence.
 - Schema registry and compatibility automation.
-- Release signing, timestamping, and revocation technology.
+- Policy-bundle signing remains unresolved. Artifact release signing,
+  timestamp/freshness, revocation, and promotion semantics are proposed by
+  [ADR-0012](../decisions/ADR-0012-artifact-signing-and-promotion-trust.md) and
+  remain unresolved until acceptance.

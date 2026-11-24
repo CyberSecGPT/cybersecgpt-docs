@@ -238,5 +238,8 @@ database access.
 
 - Concrete package coordinates and schema registry technology.
 - Concrete service and event transports and delivery guarantees.
-- Policy and artifact signing technology and trust-root ownership.
+- Policy signing remains unresolved. Artifact signing, promotion, and trust-root
+  ownership are proposed by
+  [ADR-0012](../decisions/ADR-0012-artifact-signing-and-promotion-trust.md)
+  and remain unresolved until that decision is accepted.
 - Criteria and evidence required to reopen a deferred repository split.

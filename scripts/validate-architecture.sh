@@ -12,6 +12,7 @@ required_files=(
   "docs/governance/architecture-change-gate.md"
   "docs/decisions/README.md"
   "docs/decisions/ADR-0011-native-brain-system-architecture.md"
+  "docs/decisions/ADR-0012-artifact-signing-and-promotion-trust.md"
   "docs/security/native-brain-threat-model.md"
   "docs/specifications/model-contract.md"
   "docs/specifications/tokenizer-contract.md"
@@ -20,6 +21,7 @@ required_files=(
   "docs/specifications/tool-contract.md"
   "docs/specifications/event-contract.md"
   "docs/specifications/native-brain-conformance-profile.md"
+  "docs/specifications/artifact-trust-and-promotion-contract.md"
   "docs/reviews/p5-native-brain-independent-review-checklist.md"
   "docs/reviews/p5-native-brain-independent-review-acceptance-2026-09-03.md"
 )
@@ -61,6 +63,25 @@ fi
 
 if ! grep -q '| \[ADR-0011\].*| Accepted |' docs/decisions/README.md; then
   echo "ERROR: ADR index does not record ADR-0011 as Accepted." >&2
+  exit 1
+fi
+
+echo "Checking ADR-0012 acceptance state..."
+
+if ! grep -Fq '**Accepted — Roadmap P6.12; effective only after final exact-head acceptance and merge.**' \
+  docs/decisions/ADR-0012-artifact-signing-and-promotion-trust.md; then
+  echo "ERROR: ADR-0012 is not recorded as an accepted P6.12 decision." >&2
+  exit 1
+fi
+
+if ! grep -q '| \[ADR-0012\].*| Accepted |' docs/decisions/README.md; then
+  echo "ERROR: ADR index does not record ADR-0012 as Accepted." >&2
+  exit 1
+fi
+
+if ! grep -q 'ADR-0012-artifact-signing-and-promotion-trust.md' \
+  docs/specifications/artifact-trust-and-promotion-contract.md; then
+  echo "ERROR: Artifact trust contract is not governed by ADR-0012." >&2
   exit 1
 fi
 

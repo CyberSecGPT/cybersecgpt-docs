@@ -45,6 +45,14 @@ agent ownership, security, enterprise, infrastructure, artifact/event contracts,
 and the Native Brain architecture. An accepted ADR defines an authoritative
 direction; it does not claim that the affected implementation is complete.
 
+[Proposed ADR-0012](docs/decisions/ADR-0012-artifact-signing-and-promotion-trust.md)
+and the proposed
+[Artifact Trust and Promotion Contract](docs/specifications/artifact-trust-and-promotion-contract.md)
+define the P6.12 review boundary for offline-verifiable artifact signing,
+trust-root ownership, revocation, and promotion states. They authorize no key
+creation, signing, publication, promotion, or Tokenizer v1 selection before
+exact-head acceptance and later owner-specific gates.
+
 ## P5 review evidence
 
 - [P5 Native Brain independent review checklist](docs/reviews/p5-native-brain-independent-review-checklist.md)
@@ -86,6 +94,7 @@ theft, persistence, evasion, destructive actions, or unauthorized access.
 - [Tool contract](docs/specifications/tool-contract.md)
 - [Event contract](docs/specifications/event-contract.md)
 - [Native Brain conformance profile](docs/specifications/native-brain-conformance-profile.md)
+- [Artifact trust and promotion contract](docs/specifications/artifact-trust-and-promotion-contract.md)
 
 These specifications establish conceptual boundaries and compatibility rules.
 They do not assert that a wire format, implementation, or artifact is currently

@@ -32,6 +32,7 @@ define a boundary whose repository is still empty.
 | [ADR-0009](ADR-0009-cloud-and-infrastructure-boundaries.md) | Cloud and Infrastructure Boundaries | Accepted |
 | [ADR-0010](ADR-0010-artifact-and-event-contracts.md) | Artifact and Event Contracts | Accepted |
 | [ADR-0011](ADR-0011-native-brain-system-architecture.md) | Native Brain System Architecture | Accepted |
+| [ADR-0012](ADR-0012-artifact-signing-and-promotion-trust.md) | Artifact Signing and Promotion Trust Architecture | Accepted |
 
 ## Governance
 

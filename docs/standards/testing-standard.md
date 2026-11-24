@@ -152,4 +152,6 @@ hashes, known skips, and approver where required.
 - Supported accelerator test matrix.
 - Long-running evaluation cadence.
 - Canonical fixture registry and retention.
-- Required artifact-signing and CI attestation systems.
+- Concrete artifact-signing and CI-attestation implementations. The proposed
+  cross-repository conformance boundary is defined by
+  [ADR-0012](../decisions/ADR-0012-artifact-signing-and-promotion-trust.md).
