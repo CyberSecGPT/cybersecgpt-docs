@@ -82,7 +82,22 @@ and migration decision.
 Unknown profile, algorithm, media type, predicate, role, threshold, or required
 field is rejected before artifact admission.
 
+### `UnsignedCandidateIdentity`
+
+The candidate identity is fixed at construction: it binds the artifact kind,
+contract and format versions, exact payload and manifest digests and lengths,
+source revision, and applicable pre-construction policy revision. The manifest
+MUST NOT contain the digest of itself or of any downstream decision. Evaluation
+and exact-candidate governance approval reference this identity without modifying
+it. Pre-construction rights approval does not authorize distribution.
+
 ### `ArtifactReleaseIdentity`
+
+This record is created only after signing. It extends, and MUST explicitly
+reference, the unchanged unsigned candidate identity. Build, evaluation and
+governance statements MUST NOT bind the digest of the detached signature or a
+later publication or promotion record. Publication and promotion records refer to
+the completed release identity, never the reverse.
 
 | Field | Meaning |
 | --- | --- |
@@ -111,7 +126,7 @@ different release proposal.
 | Field | Meaning |
 | --- | --- |
 | `promotion_id` | immutable transition identifier |
-| `artifact_identity` | exact `ArtifactReleaseIdentity` reference |
+| `artifact_identity` | exact unsigned candidate reference for pre-signing transitions; on signing and thereafter, also bind the signed release identity |
 | `from_state` | prior artifact state |
 | `to_state` | requested artifact state |
 | `channel` | optional channel affected by the transition |
@@ -176,7 +191,7 @@ The only successful state transitions are:
 
 | From | To | Minimum evidence and authority |
 | --- | --- | --- |
-| none | `unsigned_candidate` | domain owner constructs exact inert bytes and manifest |
+| none | `unsigned_candidate` | domain owner constructs exact inert bytes and manifest after pre-construction rights and policy approval |
 | `unsigned_candidate` | `evaluation_eligible` | domain validation, deterministic identity, provenance, SBOM, and evidence completeness pass |
 | `evaluation_eligible` | `governance_approved` | independent evaluation supports release and governance approves exact licence/risk/distribution identity |
 | `governance_approved` | `signed` | protected release signer signs the exact admitted file set under the accepted profile |
@@ -228,10 +243,12 @@ SPDX 3.0 JSON SBOM
 SLSA Provenance v1 attestation bundle
 ```
 
-The domain manifest binds independent evaluation, governance, conformance, source,
-dataset, and training identities by digest rather than embedding sensitive or
-mutable source material. The detached OMS bundle is stored beside the release set
-and is bound by TUF targets metadata.
+The domain manifest binds existing source, dataset, training, and conformance
+identities by digest rather than embedding sensitive or mutable source material.
+The release identity binds downstream independent evaluation and exact-candidate
+governance records separately, without rewriting the candidate manifest. The
+detached OMS bundle is stored beside the release set and is bound by TUF targets
+metadata.
 
 No archive, executable object graph, plugin, callback, script, symlink, device,
 named pipe, external reference, installer, dynamic import, or automatic dependency

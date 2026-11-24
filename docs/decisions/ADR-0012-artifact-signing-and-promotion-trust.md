@@ -320,6 +320,13 @@ its policy and evidence bindings without inventing a new cryptographic container
 
 ## Acceptance and follow-up
 
+The tokenizer gate must be amended and separately accepted before implementation:
+governance first approves the rights basis and policy for constructing an inert
+candidate without granting distribution rights. After construction and independent
+evaluation, governance must separately approve distribution of the exact unsigned
+candidate digest and evidence. No approval can refer to a not-yet-produced
+signature, and signing cannot substitute for exact-candidate approval.
+
 This proposal authorizes no key creation, signing, publication, promotion,
 installation, model work, or P7 work. If accepted, the next ordered proposal is a
 `cybersecgpt-governance` decision binding Tokenizer v1 licence, notices,
