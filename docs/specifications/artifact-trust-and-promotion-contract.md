@@ -2,13 +2,12 @@
 
 ## Status
 
-**Proposed — governed by
+**Governed by
 [ADR-0012](../decisions/ADR-0012-artifact-signing-and-promotion-trust.md).**
 
 This is a conceptual cross-repository contract. It does not claim an executable
 schema, trust root, key ceremony, registry, signer, promotion service, or consumer
-implementation exists. Until ADR-0012 is accepted, signing and promotion
-technology remains unresolved.
+implementation exists. ADR-0012 defines when the decision takes effect.
 
 ## Purpose
 

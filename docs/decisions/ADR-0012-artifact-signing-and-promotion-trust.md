@@ -2,7 +2,12 @@
 
 ## Status
 
-**Proposed — Roadmap P6.12**
+**Accepted — Roadmap P6.12; effective only after final exact-head acceptance and merge.**
+
+The [project-owner architecture acceptance](https://github.com/CyberSecGPT/cybersecgpt-docs/pull/6#issuecomment-7137119573)
+binds the reviewed design to `fad9838d3b39692f8f0bc53d384c86839d7f9fd6`.
+Architecture Validation and Agent Policy Gate passed for that revision.
+This record does not authorize signing, publication, or promotion.
 
 This decision is not binding and MUST NOT authorize signing, publication, or
 promotion until the exact pull-request head receives explicit project-owner

@@ -66,16 +66,16 @@ if ! grep -q '| \[ADR-0011\].*| Accepted |' docs/decisions/README.md; then
   exit 1
 fi
 
-echo "Checking ADR-0012 proposal state..."
+echo "Checking ADR-0012 acceptance state..."
 
-if ! grep -q '\*\*Proposed — Roadmap P6.12\*\*' \
+if ! grep -Fq '**Accepted — Roadmap P6.12; effective only after final exact-head acceptance and merge.**' \
   docs/decisions/ADR-0012-artifact-signing-and-promotion-trust.md; then
-  echo "ERROR: ADR-0012 is not recorded as a P6.12 proposal." >&2
+  echo "ERROR: ADR-0012 is not recorded as an accepted P6.12 decision." >&2
   exit 1
 fi
 
-if ! grep -q '| \[ADR-0012\].*| Proposed |' docs/decisions/README.md; then
-  echo "ERROR: ADR index does not record ADR-0012 as Proposed." >&2
+if ! grep -q '| \[ADR-0012\].*| Accepted |' docs/decisions/README.md; then
+  echo "ERROR: ADR index does not record ADR-0012 as Accepted." >&2
   exit 1
 fi
 
